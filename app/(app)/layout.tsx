@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .orderBy(projects.name)
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen flex-col overflow-hidden md:flex-row">
       <KeyboardShortcuts />
       <HelpModal />
       <Sidebar projects={userProjects} />
