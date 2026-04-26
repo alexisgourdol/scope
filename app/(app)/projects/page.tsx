@@ -1,8 +1,23 @@
-export default function ProjectsPage() {
-  return (
-    <div className="p-8">
-      <h1 className="text-lg font-semibold">Projects</h1>
-      <p className="mt-1 text-sm text-muted-foreground">No projects yet.</p>
-    </div>
-  )
+import { db } from "@/db"
+import { projects, issues } from "@/db/schema"
+import { eq, sql } from "drizzle-orm"
+import { USER_ID } from "@/lib/auth"
+import { ProjectList } from "@/components/project-list"
+
+export default async function ProjectsPage() {
+  const rows = await db
+    .select({
+      id: projects.id,
+      name: projects.name,
+      createdAt: projects.createdAt,
+      updatedAt: projects.updatedAt,
+      issueCount: sql<number>`count(${issues.id})::int`,
+    })
+    .from(projects)
+    .leftJoin(issues, eq(issues.projectId, projects.id))
+    .where(eq(projects.userId, USER_ID))
+    .groupBy(projects.id)
+    .orderBy(projects.name)
+
+  return <ProjectList projects={rows} />
 }

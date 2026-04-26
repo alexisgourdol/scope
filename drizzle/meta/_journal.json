@@ -8,6 +8,13 @@
       "when": 1777211468293,
       "tag": "0000_puzzling_giant_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777234067969,
+      "tag": "0001_sour_nehzno",
+      "breakpoints": true
     }
   ]
 }

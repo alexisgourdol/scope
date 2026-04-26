@@ -45,7 +45,7 @@ export const issues = pgTable("issues", {
   description: text("description"),
   status: statusEnum("status").notNull().default("backlog"),
   priority: priorityEnum("priority").notNull().default("none"),
-  projectId: uuid("project_id").references(() => projects.id),
+  projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id),
