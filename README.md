@@ -31,7 +31,7 @@ Scope is a personal project management tool inspired by Linear's clean design, s
 1. Clone the repo:
 
    ```bash
-   git clone https://github.com/<your-username>/scope.git
+   git clone https://github.com/alexisgourdol/scope.git
    cd scope
    ```
 
