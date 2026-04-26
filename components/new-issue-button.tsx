@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,6 +24,12 @@ export function NewIssueButton({ projects }: { projects: Project[] }) {
   const [priority, setPriority] = useState("none")
   const [projectId, setProjectId] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    function handler() { setOpen(true) }
+    document.addEventListener("scope:create-issue", handler)
+    return () => document.removeEventListener("scope:create-issue", handler)
+  }, [])
 
   function handleOpenChange(next: boolean) {
     setOpen(next)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import ReactMarkdown from "react-markdown"
@@ -42,6 +42,20 @@ export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Pr
   const [projectId, setProjectId] = useState(issue.projectId ?? "")
   const [editingDesc, setEditingDesc] = useState(false)
   const titleRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    function onEditTitle() { titleRef.current?.focus(); titleRef.current?.select() }
+    function onSetStatus(e: Event) {
+      const value = (e as CustomEvent<string>).detail
+      handleStatusChange(value)
+    }
+    document.addEventListener("scope:edit-title", onEditTitle)
+    document.addEventListener("scope:set-status", onSetStatus)
+    return () => {
+      document.removeEventListener("scope:edit-title", onEditTitle)
+      document.removeEventListener("scope:set-status", onSetStatus)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function patch(fields: Record<string, unknown>) {
     await fetch(`/api/issues/${issue.id}`, {

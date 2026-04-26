@@ -1,11 +1,13 @@
 import { db } from "@/db"
 import { issues, projects } from "@/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
 import Link from "next/link"
 import { NewIssueButton } from "@/components/new-issue-button"
 import { IssueStatusIcon } from "@/components/issue-status-icon"
 import { IssuePriorityIcon } from "@/components/issue-priority-icon"
+import { ProjectFilter } from "@/components/project-filter"
+import { Suspense } from "react"
 
 const STATUS_ORDER = ["backlog", "todo", "in_progress", "done"] as const
 const STATUS_LABELS: Record<string, string> = {
@@ -25,7 +27,15 @@ function formatRelative(date: Date) {
   return `${Math.floor(days / 30)}mo ago`
 }
 
-export default async function IssuesPage() {
+type SearchParams = Promise<{ project?: string }>
+
+export default async function IssuesPage({ searchParams }: { searchParams: SearchParams }) {
+  const { project: projectFilter } = await searchParams
+
+  const whereClause = projectFilter
+    ? and(eq(issues.userId, USER_ID), eq(issues.projectId, projectFilter))
+    : eq(issues.userId, USER_ID)
+
   const [issueRows, projectList] = await Promise.all([
     db
       .select({
@@ -38,7 +48,7 @@ export default async function IssuesPage() {
       })
       .from(issues)
       .leftJoin(projects, eq(issues.projectId, projects.id))
-      .where(eq(issues.userId, USER_ID))
+      .where(whereClause)
       .orderBy(desc(issues.updatedAt)),
     db.select().from(projects).where(eq(projects.userId, USER_ID)).orderBy(projects.name),
   ])
@@ -51,15 +61,20 @@ export default async function IssuesPage() {
 
   return (
     <div className="mx-auto max-w-4xl p-8">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-lg font-semibold">Issues</h1>
-        <NewIssueButton projects={projectList} />
+        <div className="flex items-center gap-2">
+          <Suspense>
+            <ProjectFilter projects={projectList} />
+          </Suspense>
+          <NewIssueButton projects={projectList} />
+        </div>
       </div>
 
       {issueRows.length === 0 ? (
         <div className="py-20 text-center text-muted-foreground">
-          <p className="text-sm">No issues yet.</p>
-          <p className="mt-1 text-xs">Click &ldquo;New issue&rdquo; to create one.</p>
+          <p className="text-sm">{projectFilter ? "No issues in this project." : "No issues yet."}</p>
+          <p className="mt-1 text-xs">Press <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">C</kbd> to create one.</p>
         </div>
       ) : (
         <div className="space-y-8">
