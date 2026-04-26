@@ -1,0 +1,99 @@
+# ─────────────────────────────────────────────────────────────
+# Dependencies
+# ─────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.*
+.yarn/install-state.gz
+
+# ─────────────────────────────────────────────────────────────
+# Next.js build output
+# ─────────────────────────────────────────────────────────────
+.next/
+out/
+build/
+dist/
+
+# ─────────────────────────────────────────────────────────────
+# Production
+# ─────────────────────────────────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ─────────────────────────────────────────────────────────────
+# Environment variables — NEVER commit these
+# ─────────────────────────────────────────────────────────────
+.env
+.env*.local
+.env.development
+.env.production
+.env.test
+# Note: .env.example IS committed (it's a template with no real secrets)
+!.env.example
+
+# ─────────────────────────────────────────────────────────────
+# Logs
+# ─────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+
+# ─────────────────────────────────────────────────────────────
+# Testing & coverage
+# ─────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+*.lcov
+
+# ─────────────────────────────────────────────────────────────
+# Drizzle
+# ─────────────────────────────────────────────────────────────
+# Generated migration metadata is committed (it's part of your schema history),
+# but local database snapshots and journals are not
+drizzle/.snapshot/
+.drizzle/
+
+# ─────────────────────────────────────────────────────────────
+# Vercel
+# ─────────────────────────────────────────────────────────────
+.vercel/
+
+# ─────────────────────────────────────────────────────────────
+# Editor & OS
+# ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/*
+# Keep some VS Code settings shareable, but ignore personal ones
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.history/
+
+# ─────────────────────────────────────────────────────────────
+# Claude Code & AI tooling
+# ─────────────────────────────────────────────────────────────
+# Claude Code's local session state — personal, not part of the project
+.claude/
+# But CLAUDE.md IS committed (it's project context for collaborators / future you)
+
+# ─────────────────────────────────────────────────────────────
+# Docker / devcontainer
+# ─────────────────────────────────────────────────────────────
+# Local volumes and overrides
+docker-compose.override.yml
+.devcontainer/.env
+
+# ─────────────────────────────────────────────────────────────
+# Miscellaneous
+# ─────────────────────────────────────────────────────────────
+*.pem
+.turbo/
+.cache/

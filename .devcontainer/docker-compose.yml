@@ -1,0 +1,28 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    network_mode: service:db
+    # network_mode lets the app reach Postgres at localhost:5432, which matches
+    # how it'll behave against Supabase later (localhost during dev tunnels, etc.)
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - scope-pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: scope
+      POSTGRES_PASSWORD: scope_dev_password
+      POSTGRES_DB: scope_dev
+    # Healthcheck so the app container can wait for db readiness if needed
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scope -d scope_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  scope-pgdata:
