@@ -18,18 +18,18 @@ export function Sidebar({ projects }: { projects: Project[] }) {
     const active = pathname === href
     return `flex items-center rounded-md px-3 py-1.5 text-sm transition-colors ${
       active
-        ? "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)] font-medium"
-        : "text-[var(--sidebar-foreground)] hover:bg-[var(--sidebar-accent)]/60"
+        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+        : "text-sidebar-foreground hover:bg-sidebar-accent/60"
     }`
   }
 
   return (
-    <aside className="flex h-full w-56 flex-shrink-0 flex-col border-r bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
-      <div className="flex h-11 items-center border-b border-[var(--sidebar-border)] px-4">
+    <aside className="flex h-full w-56 flex-shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      <div className="flex h-11 items-center border-b border-sidebar-border px-4">
         <span className="text-sm font-semibold tracking-tight">Scope</span>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-2 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto space-y-0.5 p-2">
         <Link href="/issues" className={navClass("/issues")}>
           Issues
         </Link>
@@ -51,10 +51,10 @@ export function Sidebar({ projects }: { projects: Project[] }) {
         )}
       </nav>
 
-      <div className="border-t border-[var(--sidebar-border)] p-2">
+      <div className="border-t border-sidebar-border p-2">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-[var(--sidebar-accent)]/60 transition-colors"
+          className="flex w-full items-center rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent/60"
         >
           Sign out
         </button>
