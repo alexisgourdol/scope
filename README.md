@@ -1,12 +1,12 @@
 # Scope
 
-A minimal, single-user issue tracker — built in 14 days with Claude Code.
+A minimal, single-user issue tracker — built in ~~14~~ 2 days with Claude Code.
 
 Scope is a personal project management tool inspired by Linear's clean design, stripped down to the features that actually matter for solo work: issues, projects, statuses, and keyboard shortcuts. Nothing more.
 
 ## Status
 
-🚧 **In development** — Day 1 of 14.
+🚧 **In development** — Day 1 of ~~14~~ 2.
 
 ## Stack
 
