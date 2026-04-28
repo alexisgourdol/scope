@@ -126,15 +126,20 @@ export function IssueDetail({ issue, projects, isDemo }: { issue: IssueRow; proj
       <textarea
         ref={titleRef}
         value={title}
-        onChange={(e) => !isDemo && setTitle(e.target.value)}
+        onChange={(e) => !isDemo && setTitle(e.target.value.slice(0, 200))}
         onBlur={() => !isDemo && handleTitleBlur()}
         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); titleRef.current?.blur() } }}
         readOnly={isDemo}
         rows={1}
-        className={`mb-4 w-full resize-none bg-transparent text-2xl font-semibold leading-snug outline-none placeholder:text-muted-foreground ${isDemo ? "cursor-default" : ""}`}
+        className={`mb-1 w-full resize-none bg-transparent text-2xl font-semibold leading-snug outline-none placeholder:text-muted-foreground ${isDemo ? "cursor-default" : ""}`}
         placeholder="Issue title"
         style={{ fieldSizing: "content" } as React.CSSProperties}
       />
+      {!isDemo && 200 - title.length <= 40 && (
+        <p className={`mb-3 text-right text-xs ${200 - title.length <= 10 ? "text-destructive" : "text-muted-foreground"}`}>
+          {200 - title.length} characters left
+        </p>
+      )}
 
       {/* Metadata */}
       <div className="mb-8 flex flex-wrap items-center gap-2 text-sm">

@@ -69,7 +69,7 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
           <Suspense>
             <ProjectFilter projects={projectList} />
           </Suspense>
-          <NewIssueButton projects={projectList} isDemo={session === "demo"} />
+          <NewIssueButton projects={projectList} isDemo={session === "demo"} defaultProjectId={projectFilter} />
         </div>
       </div>
 

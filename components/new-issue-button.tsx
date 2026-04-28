@@ -16,13 +16,23 @@ import type { Project } from "@/db/schema"
 const SELECT_CLASS =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
 
-export function NewIssueButton({ projects, isDemo }: { projects: Project[]; isDemo?: boolean }) {
+const TITLE_MAX = 200
+
+export function NewIssueButton({
+  projects,
+  isDemo,
+  defaultProjectId,
+}: {
+  projects: Project[]
+  isDemo?: boolean
+  defaultProjectId?: string
+}) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [status, setStatus] = useState("backlog")
   const [priority, setPriority] = useState("none")
-  const [projectId, setProjectId] = useState("")
+  const [projectId, setProjectId] = useState(defaultProjectId ?? "")
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -40,7 +50,7 @@ export function NewIssueButton({ projects, isDemo }: { projects: Project[]; isDe
       setTitle("")
       setStatus("backlog")
       setPriority("none")
-      setProjectId("")
+      setProjectId(defaultProjectId ?? "")
     }
   }
 
@@ -58,6 +68,9 @@ export function NewIssueButton({ projects, isDemo }: { projects: Project[]; isDe
     router.refresh()
   }
 
+  const remaining = TITLE_MAX - title.length
+  const nearLimit = remaining <= 40
+
   return (
     <>
       <Button size="sm" onClick={() => setOpen(true)}>
@@ -70,12 +83,19 @@ export function NewIssueButton({ projects, isDemo }: { projects: Project[]; isDe
             <DialogTitle>New issue</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 pt-1">
-            <Input
-              placeholder="Issue title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              autoFocus
-            />
+            <div className="space-y-1">
+              <Input
+                placeholder="Issue title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
+                autoFocus
+              />
+              {nearLimit && (
+                <p className={`text-right text-xs ${remaining <= 10 ? "text-destructive" : "text-muted-foreground"}`}>
+                  {remaining} characters left
+                </p>
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-xs font-medium text-muted-foreground">Status</label>
