@@ -19,7 +19,11 @@ These came out of the planning conversation and are pre-loaded:
 
 Anything I think of while building goes here. Don't filter — capture first, evaluate later.
 
--
+- **Kanban view** — gap-closing feature vs Linear; significant new view
+- **Archive issues** — Done issues clutter the list over time; auto-archive after 14 days of inactivity
+- **Project links** — attach up to 3 URLs (GitHub, docs, etc.) with optional label to a project; needs new DB columns + UI section
+- **Claude tester agent** — give Claude a way to "see" and interact with the live site for automated QA; meta/tooling, not a user feature
+- **Latency / caching** — filtering feels slightly slow; measure before optimising, likely a Vercel cold-start or DB round-trip issue
 
 ---
 

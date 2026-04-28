@@ -1,0 +1,38 @@
+# V1 Dogfooding Log — Scope
+
+First real use session: 2026-04-28
+
+---
+
+## Bugs found and fixed
+
+### Sidebar stale after project mutations
+After creating or deleting a project on /projects, the sidebar project list didn't update until a manual page reload. Root cause: Next.js layout cache wasn't invalidated.
+**Fix:** call `revalidatePath("/", "layout")` from the project create, rename, and delete API routes.
+
+### Delete project fails silently when it has issues
+The production DB was missing migration 0001 (`ON DELETE set null` on the issues FK). Deleting a project with issues threw a FK constraint error that the API swallowed and the UI ignored.
+**Fix:** wrap DELETE in try/catch, return 409 on failure, show an alert in the UI. Applied migration 0001 directly via Supabase SQL editor.
+
+### New issue dialog: project pre-fill shows stale value on first open
+When navigating between project filters client-side, `NewIssueButton` stays mounted so `useState(defaultProjectId)` doesn't re-run. First open showed the previous project.
+**Fix:** `useEffect` on `defaultProjectId` to keep state in sync with the prop.
+
+---
+
+## Improvements made
+
+### Demo / read-only mode
+CV reviewers need access without the admin password. Added `DEMO_SECRET` env var: logging in with it gives a read-only session. All mutation API routes return 403 for demo sessions. UI hides create/edit/delete controls and shows a "demo" badge in the sidebar.
+
+### Dark mode button contrast
+Chrome's "Enable automatic dark mode" was double-converting the already-correct colors. Added `color-scheme: light` / `color-scheme: dark` to CSS and `<meta name="color-scheme" content="light dark">` to the root layout so Chrome knows the page handles dark mode natively.
+
+### Pre-fill project when creating issue from a filter view
+When /issues is filtered by a project, opening the new issue dialog now pre-selects that project.
+
+### Create a project inline from the new issue dialog
+Added a "+ New" link next to the project dropdown. Clicking it swaps in an inline input — type a name, confirm, and the project is created and auto-selected without leaving the dialog.
+
+### Issue title character limit (200 chars)
+Added a hard cap of 200 characters on issue titles, with a counter that appears in the last 40 chars and turns red in the last 10. Applies to both the create dialog and the issue detail editor.
