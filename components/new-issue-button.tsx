@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { Check, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -35,12 +36,24 @@ export function NewIssueButton({
   const [projectId, setProjectId] = useState(defaultProjectId ?? "")
   const [loading, setLoading] = useState(false)
 
+  // inline project creation
+  const [creatingProject, setCreatingProject] = useState(false)
+  const [newProjectName, setNewProjectName] = useState("")
+  const [extraProjects, setExtraProjects] = useState<Project[]>([])
+  const newProjectRef = useRef<HTMLInputElement>(null)
+
+  const allProjects = [...projects, ...extraProjects]
+
   useEffect(() => {
     if (isDemo) return
     function handler() { setOpen(true) }
     document.addEventListener("scope:create-issue", handler)
     return () => document.removeEventListener("scope:create-issue", handler)
   }, [isDemo])
+
+  useEffect(() => {
+    if (creatingProject) newProjectRef.current?.focus()
+  }, [creatingProject])
 
   if (isDemo) return null
 
@@ -51,7 +64,26 @@ export function NewIssueButton({
       setStatus("backlog")
       setPriority("none")
       setProjectId(defaultProjectId ?? "")
+      setCreatingProject(false)
+      setNewProjectName("")
+      setExtraProjects([])
     }
+  }
+
+  async function handleCreateProject() {
+    if (!newProjectName.trim()) { setCreatingProject(false); return }
+    const res = await fetch("/api/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newProjectName.trim() }),
+    })
+    if (res.ok) {
+      const created = await res.json()
+      setExtraProjects((prev) => [...prev, created])
+      setProjectId(created.id)
+    }
+    setCreatingProject(false)
+    setNewProjectName("")
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -117,17 +149,48 @@ export function NewIssueButton({
                 </select>
               </div>
             </div>
-            {projects.length > 0 && (
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-muted-foreground">Project</label>
-                <select value={projectId} onChange={(e) => setProjectId(e.target.value)} className={SELECT_CLASS}>
-                  <option value="">No project</option>
-                  {projects.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground">Project</label>
+              {creatingProject ? (
+                <div className="flex items-center gap-1">
+                  <Input
+                    ref={newProjectRef}
+                    placeholder="Project name"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") { e.preventDefault(); handleCreateProject() }
+                      if (e.key === "Escape") { setCreatingProject(false); setNewProjectName("") }
+                    }}
+                    className="h-8 text-sm"
+                  />
+                  <Button type="button" size="icon" variant="ghost" className="h-8 w-8 flex-shrink-0" onClick={handleCreateProject}>
+                    <Check className="h-4 w-4" />
+                  </Button>
+                  <Button type="button" size="icon" variant="ghost" className="h-8 w-8 flex-shrink-0" onClick={() => { setCreatingProject(false); setNewProjectName("") }}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <select value={projectId} onChange={(e) => setProjectId(e.target.value)} className={SELECT_CLASS}>
+                    <option value="">No project</option>
+                    {allProjects.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setCreatingProject(true)}
+                    className="flex-shrink-0 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    + New
+                  </button>
+                </div>
+              )}
+            </div>
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 Cancel
