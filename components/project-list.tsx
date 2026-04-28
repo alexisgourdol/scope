@@ -51,7 +51,11 @@ export function ProjectList({ projects, isDemo }: { projects: ProjectRow[]; isDe
   }
 
   async function handleDelete(id: string) {
-    await fetch(`/api/projects/${id}`, { method: "DELETE" })
+    const res = await fetch(`/api/projects/${id}`, { method: "DELETE" })
+    if (!res.ok) {
+      alert("Could not delete project. Move or delete its issues first.")
+      return
+    }
     router.refresh()
   }
 

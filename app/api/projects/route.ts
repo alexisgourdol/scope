@@ -3,6 +3,7 @@ import { projects } from "@/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
 import { getSession } from "@/lib/session"
+import { revalidatePath } from "next/cache"
 import { NextResponse } from "next/server"
 
 export async function GET() {
@@ -27,5 +28,6 @@ export async function POST(request: Request) {
     .insert(projects)
     .values({ name: name.trim(), userId: USER_ID })
     .returning()
+  revalidatePath("/", "layout")
   return NextResponse.json(project, { status: 201 })
 }
