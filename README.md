@@ -1,21 +1,36 @@
-# Scope
+# 🔭 Scope
 
-A minimal, single-user issue tracker — built in 14 days with Claude Code.
+A minimal, single-user issue tracker — built in ~~14~~ 2 days with Claude Code.
 
 Scope is a personal project management tool inspired by Linear's clean design, stripped down to the features that actually matter for solo work: issues, projects, statuses, and keyboard shortcuts. Nothing more.
 
-## Status
+## Live demo
 
-🚧 **In development** — Day 1 of 14.
+**[scope-gamma-seven.vercel.app](https://scope-gamma-seven.vercel.app)**
+
+Password: `scopedemo`
+In demo mode, creating and modifying is restricted
+
+## Features
+
+- Issues with title, description, status, and priority
+- Projects with cascade filtering
+- Status workflow: Backlog → Todo → In Progress → Done
+- Keyboard shortcuts (`C` to create, `1–4` to set status, `E` to edit title)
+- Filterable issue list by project
+- Dark mode (follows system preference)
+- Responsive layout (mobile + desktop)
 
 ## Stack
 
-- **Frontend:** Next.js 15 (App Router), TypeScript, Tailwind CSS, shadcn/ui
-- **Backend:** Next.js Server Actions
-- **Database:** Postgres (Supabase in production, local via Docker in development)
-- **ORM:** Drizzle
-- **Hosting:** Vercel
-- **Dev environment:** VS Code devcontainer with Docker Compose
+| Layer     | Choice                                            |
+| --------- | ------------------------------------------------- |
+| Framework | Next.js 15 (App Router)                           |
+| Language  | TypeScript                                        |
+| Styling   | Tailwind CSS + shadcn/ui                          |
+| ORM       | Drizzle                                           |
+| Database  | Postgres (Supabase in production, Docker locally) |
+| Hosting   | Vercel                                            |
 
 ## Getting started
 
@@ -28,48 +43,38 @@ Scope is a personal project management tool inspired by Linear's clean design, s
 
 ### Setup
 
-1. Clone the repo:
+1. Clone the repo and open in VS Code — reopen in the devcontainer when prompted:
 
    ```bash
    git clone https://github.com/alexisgourdol/scope.git
    cd scope
    ```
 
-2. Copy the environment template and fill in your Supabase credentials:
+2. Copy the environment template and fill in your credentials:
 
    ```bash
    cp .env.example .env.local
    ```
 
-3. Open in VS Code and reopen in the devcontainer when prompted. The container installs all dependencies automatically.
-
-4. Start the dev server:
+3. Run the dev server:
 
    ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000).
+4. Open [http://localhost:3000](http://localhost:3000).
 
-## Project structure
+### Environment variables
 
-```
-.devcontainer/        # Docker + devcontainer config
-V1_SCOPE.md           # Binding scope contract for v1 features
-V2_IDEAS.md           # Parked ideas for future versions
-linear-clone-plan.md  # Full 14-day build plan
-CLAUDE.md             # Project context for Claude Code sessions
-```
-
-## V1 scope
-
-Issues (title, description, status, priority) · Projects · Status workflow (Backlog → Todo → In Progress → Done) · Keyboard shortcuts · Filterable list view · Dark mode · Responsive layout.
-
-See [V1_SCOPE.md](./V1_SCOPE.md) for the full scope contract including what's explicitly out.
+| Variable       | Description                             |
+| -------------- | --------------------------------------- |
+| `DATABASE_URL` | Postgres connection string              |
+| `AUTH_SECRET`  | Admin password (keep private)           |
+| `DEMO_SECRET`  | Read-only demo password (safe to share) |
 
 ## Built with Claude Code
 
-This project was built using [Claude Code](https://claude.com/claude-code) as a pair programmer. Claude wrote the code; I reviewed every commit, tested each feature, and made all architectural decisions. The commit history reflects a ticket-by-ticket workflow — small, reviewable PRs rather than large autonomous runs.
+This project was built using [Claude Code](https://claude.com/claude-code) as a pair programmer. Claude wrote the code; I reviewed every commit, tested each feature, and made all architectural decisions. The commit history reflects a ticket-by-ticket workflow — one logical change per commit.
 
 ## License
 
