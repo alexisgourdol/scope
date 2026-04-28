@@ -45,6 +45,10 @@ export function NewIssueButton({
   const allProjects = [...projects, ...extraProjects]
 
   useEffect(() => {
+    setProjectId(defaultProjectId ?? "")
+  }, [defaultProjectId])
+
+  useEffect(() => {
     if (isDemo) return
     function handler() { setOpen(true) }
     document.addEventListener("scope:create-issue", handler)
