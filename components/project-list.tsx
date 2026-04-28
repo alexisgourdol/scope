@@ -14,7 +14,7 @@ type ProjectRow = {
   updatedAt: Date
 }
 
-export function ProjectList({ projects }: { projects: ProjectRow[] }) {
+export function ProjectList({ projects, isDemo }: { projects: ProjectRow[]; isDemo?: boolean }) {
   const router = useRouter()
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState("")
@@ -59,9 +59,11 @@ export function ProjectList({ projects }: { projects: ProjectRow[] }) {
     <div className="mx-auto max-w-3xl p-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-lg font-semibold">Projects</h1>
-        <Button size="sm" onClick={() => setCreating(true)}>
-          New project
-        </Button>
+        {!isDemo && (
+          <Button size="sm" onClick={() => setCreating(true)}>
+            New project
+          </Button>
+        )}
       </div>
 
       <div className="divide-y rounded-md border">
@@ -93,7 +95,7 @@ export function ProjectList({ projects }: { projects: ProjectRow[] }) {
 
         {projects.map((p) => (
           <div key={p.id} className="flex items-center gap-3 px-3 py-2.5">
-            {editingId === p.id ? (
+            {!isDemo && editingId === p.id ? (
               <>
                 <Input
                   autoFocus
@@ -118,12 +120,16 @@ export function ProjectList({ projects }: { projects: ProjectRow[] }) {
                 <span className="text-xs text-muted-foreground">
                   {p.issueCount} {p.issueCount === 1 ? "issue" : "issues"}
                 </span>
-                <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => startEdit(p)}>
-                  <Pencil className="h-3.5 w-3.5" />
-                </Button>
-                <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(p.id)}>
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                {!isDemo && (
+                  <>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => startEdit(p)}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(p.id)}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </>
+                )}
               </>
             )}
           </div>

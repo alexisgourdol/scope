@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { issues, projects } from "@/db/schema"
 import { and, desc, eq } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
+import { getSession } from "@/lib/session"
 import Link from "next/link"
 import { NewIssueButton } from "@/components/new-issue-button"
 import { IssueStatusIcon } from "@/components/issue-status-icon"
@@ -36,7 +37,8 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
     ? and(eq(issues.userId, USER_ID), eq(issues.projectId, projectFilter))
     : eq(issues.userId, USER_ID)
 
-  const [issueRows, projectList] = await Promise.all([
+  const [session, issueRows, projectList] = await Promise.all([
+    getSession(),
     db
       .select({
         id: issues.id,
@@ -67,14 +69,16 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
           <Suspense>
             <ProjectFilter projects={projectList} />
           </Suspense>
-          <NewIssueButton projects={projectList} />
+          <NewIssueButton projects={projectList} isDemo={session === "demo"} />
         </div>
       </div>
 
       {issueRows.length === 0 ? (
         <div className="py-20 text-center text-muted-foreground">
           <p className="text-sm">{projectFilter ? "No issues in this project." : "No issues yet."}</p>
-          <p className="mt-1 text-xs">Press <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">C</kbd> to create one.</p>
+          {!session || session === "admin" ? (
+            <p className="mt-1 text-xs">Press <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">C</kbd> to create one.</p>
+          ) : null}
         </div>
       ) : (
         <div className="space-y-8">

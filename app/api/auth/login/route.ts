@@ -5,12 +5,19 @@ import { SESSION_COOKIE } from "@/lib/auth"
 export async function POST(request: Request) {
   const { password } = await request.json()
 
-  if (!process.env.AUTH_SECRET || password !== process.env.AUTH_SECRET) {
+  let secretValue: string | undefined
+  if (process.env.AUTH_SECRET && password === process.env.AUTH_SECRET) {
+    secretValue = process.env.AUTH_SECRET
+  } else if (process.env.DEMO_SECRET && password === process.env.DEMO_SECRET) {
+    secretValue = process.env.DEMO_SECRET
+  }
+
+  if (!secretValue) {
     return NextResponse.json({ error: "Invalid password" }, { status: 401 })
   }
 
   const jar = await cookies()
-  jar.set(SESSION_COOKIE, process.env.AUTH_SECRET, {
+  jar.set(SESSION_COOKIE, secretValue, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import type { Project } from "@/db/schema"
 
-export function Sidebar({ projects }: { projects: Project[] }) {
+export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: boolean }) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -25,8 +25,13 @@ export function Sidebar({ projects }: { projects: Project[] }) {
 
   return (
     <aside className="flex w-full flex-shrink-0 flex-col border-b border-sidebar-border bg-sidebar text-sidebar-foreground md:h-full md:w-56 md:border-b-0 md:border-r">
-      <div className="flex h-11 items-center border-b border-sidebar-border px-4">
+      <div className="flex h-11 items-center gap-2 border-b border-sidebar-border px-4">
         <span className="text-sm font-semibold tracking-tight">Scope</span>
+        {isDemo && (
+          <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            demo
+          </span>
+        )}
       </div>
 
       {/* On mobile: horizontal nav row. On desktop: vertical nav. */}

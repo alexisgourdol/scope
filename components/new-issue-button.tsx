@@ -16,7 +16,7 @@ import type { Project } from "@/db/schema"
 const SELECT_CLASS =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
 
-export function NewIssueButton({ projects }: { projects: Project[] }) {
+export function NewIssueButton({ projects, isDemo }: { projects: Project[]; isDemo?: boolean }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
@@ -26,10 +26,13 @@ export function NewIssueButton({ projects }: { projects: Project[] }) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    if (isDemo) return
     function handler() { setOpen(true) }
     document.addEventListener("scope:create-issue", handler)
     return () => document.removeEventListener("scope:create-issue", handler)
-  }, [])
+  }, [isDemo])
+
+  if (isDemo) return null
 
   function handleOpenChange(next: boolean) {
     setOpen(next)

@@ -2,11 +2,16 @@ import { db } from "@/db"
 import { issues } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
+import { getSession } from "@/lib/session"
 import { NextResponse } from "next/server"
 
 type Params = { params: Promise<{ id: string }> }
 
 export async function PATCH(request: Request, { params }: Params) {
+  if ((await getSession()) === "demo") {
+    return NextResponse.json({ error: "Read-only in demo mode" }, { status: 403 })
+  }
+
   const { id } = await params
   const body = await request.json()
 
@@ -21,6 +26,10 @@ export async function PATCH(request: Request, { params }: Params) {
 }
 
 export async function DELETE(_: Request, { params }: Params) {
+  if ((await getSession()) === "demo") {
+    return NextResponse.json({ error: "Read-only in demo mode" }, { status: 403 })
+  }
+
   const { id } = await params
   await db.delete(issues).where(and(eq(issues.id, id), eq(issues.userId, USER_ID)))
   return NextResponse.json({ ok: true })

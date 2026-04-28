@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { projects } from "@/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
+import { getSession } from "@/lib/session"
 import { NextResponse } from "next/server"
 
 export async function GET() {
@@ -14,6 +15,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if ((await getSession()) === "demo") {
+    return NextResponse.json({ error: "Read-only in demo mode" }, { status: 403 })
+  }
+
   const { name } = await request.json()
   if (!name?.trim()) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 })

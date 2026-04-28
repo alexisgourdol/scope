@@ -33,7 +33,7 @@ const PRIORITIES = [
 
 type IssueRow = Pick<Issue, "id" | "title" | "description" | "status" | "priority" | "projectId" | "createdAt" | "updatedAt">
 
-export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Project[] }) {
+export function IssueDetail({ issue, projects, isDemo }: { issue: IssueRow; projects: Project[]; isDemo?: boolean }) {
   const router = useRouter()
   const [title, setTitle] = useState(issue.title)
   const [description, setDescription] = useState(issue.description ?? "")
@@ -44,6 +44,7 @@ export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Pr
   const titleRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
+    if (isDemo) return
     function onEditTitle() { titleRef.current?.focus(); titleRef.current?.select() }
     function onSetStatus(e: Event) {
       const value = (e as CustomEvent<string>).detail
@@ -55,7 +56,7 @@ export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Pr
       document.removeEventListener("scope:edit-title", onEditTitle)
       document.removeEventListener("scope:set-status", onSetStatus)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isDemo]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function patch(fields: Record<string, unknown>) {
     await fetch(`/api/issues/${issue.id}`, {
@@ -104,6 +105,8 @@ export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Pr
   const statusLabel = STATUSES.find((s) => s.value === status)?.label ?? status
   const priorityLabel = PRIORITIES.find((p) => p.value === priority)?.label ?? priority
 
+  const badgeClass = "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-sm"
+
   return (
     <div className="mx-auto max-w-3xl px-8 py-6">
       {/* Header */}
@@ -112,79 +115,100 @@ export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Pr
           <ArrowLeft className="h-4 w-4" />
           Issues
         </Link>
-        <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground hover:text-destructive">
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        {!isDemo && (
+          <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground hover:text-destructive">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
       {/* Title */}
       <textarea
         ref={titleRef}
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        onBlur={handleTitleBlur}
+        onChange={(e) => !isDemo && setTitle(e.target.value)}
+        onBlur={() => !isDemo && handleTitleBlur()}
         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); titleRef.current?.blur() } }}
+        readOnly={isDemo}
         rows={1}
-        className="mb-4 w-full resize-none bg-transparent text-2xl font-semibold leading-snug outline-none placeholder:text-muted-foreground"
+        className={`mb-4 w-full resize-none bg-transparent text-2xl font-semibold leading-snug outline-none placeholder:text-muted-foreground ${isDemo ? "cursor-default" : ""}`}
         placeholder="Issue title"
         style={{ fieldSizing: "content" } as React.CSSProperties}
       />
 
       {/* Metadata */}
       <div className="mb-8 flex flex-wrap items-center gap-2 text-sm">
-        {/* Status */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted transition-colors text-sm">
-            <IssueStatusIcon status={status} />
-            <span>{statusLabel}</span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {STATUSES.map((s) => (
-              <DropdownMenuItem key={s.value} onClick={() => handleStatusChange(s.value)} className="flex items-center gap-2">
-                <IssueStatusIcon status={s.value} />
-                {s.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isDemo ? (
+          <>
+            <span className={badgeClass}>
+              <IssueStatusIcon status={status} />
+              <span>{statusLabel}</span>
+            </span>
+            <span className={badgeClass}>
+              <IssuePriorityIcon priority={priority} />
+              <span>{priorityLabel}</span>
+            </span>
+            {currentProject && (
+              <span className={badgeClass}>{currentProject.name}</span>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Status */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted transition-colors text-sm">
+                <IssueStatusIcon status={status} />
+                <span>{statusLabel}</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {STATUSES.map((s) => (
+                  <DropdownMenuItem key={s.value} onClick={() => handleStatusChange(s.value)} className="flex items-center gap-2">
+                    <IssueStatusIcon status={s.value} />
+                    {s.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-        {/* Priority */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted transition-colors text-sm">
-            <IssuePriorityIcon priority={priority} />
-            <span>{priorityLabel}</span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {PRIORITIES.map((p) => (
-              <DropdownMenuItem key={p.value} onClick={() => handlePriorityChange(p.value)} className="flex items-center gap-2">
-                <IssuePriorityIcon priority={p.value} />
-                {p.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            {/* Priority */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted transition-colors text-sm">
+                <IssuePriorityIcon priority={priority} />
+                <span>{priorityLabel}</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {PRIORITIES.map((p) => (
+                  <DropdownMenuItem key={p.value} onClick={() => handlePriorityChange(p.value)} className="flex items-center gap-2">
+                    <IssuePriorityIcon priority={p.value} />
+                    {p.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-        {/* Project */}
-        {projects.length > 0 && (
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted transition-colors text-sm">
-              <span>{currentProject?.name ?? "No project"}</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => handleProjectChange("")}>No project</DropdownMenuItem>
-              {projects.map((p) => (
-                <DropdownMenuItem key={p.id} onClick={() => handleProjectChange(p.id)}>
-                  {p.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            {/* Project */}
+            {projects.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted transition-colors text-sm">
+                  <span>{currentProject?.name ?? "No project"}</span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={() => handleProjectChange("")}>No project</DropdownMenuItem>
+                  {projects.map((p) => (
+                    <DropdownMenuItem key={p.id} onClick={() => handleProjectChange(p.id)}>
+                      {p.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </>
         )}
       </div>
 
       {/* Description */}
       <div className="min-h-[120px]">
-        {editingDesc ? (
+        {!isDemo && editingDesc ? (
           <textarea
             autoFocus
             value={description}
@@ -196,16 +220,16 @@ export function IssueDetail({ issue, projects }: { issue: IssueRow; projects: Pr
           />
         ) : (
           <div
-            onClick={() => setEditingDesc(true)}
-            className="cursor-text rounded-md p-1 -mx-1 hover:bg-muted/40 transition-colors min-h-[80px]"
+            onClick={() => !isDemo && setEditingDesc(true)}
+            className={`rounded-md p-1 -mx-1 transition-colors min-h-[80px] ${!isDemo ? "cursor-text hover:bg-muted/40" : ""}`}
           >
             {description ? (
               <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
                 <ReactMarkdown>{description}</ReactMarkdown>
               </div>
-            ) : (
+            ) : !isDemo ? (
               <p className="text-sm text-muted-foreground">Add a description…</p>
-            )}
+            ) : null}
           </div>
         )}
       </div>
