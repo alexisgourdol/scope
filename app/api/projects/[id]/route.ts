@@ -15,7 +15,7 @@ export async function PATCH(request: Request, { params }: Params) {
 
   const { id } = await params
   const body = await request.json()
-  const { name, action, archiveDone } = body
+  const { name, action, archiveDone, link1Url, link1Label, link2Url, link2Label, link3Url, link3Label } = body
 
   if (action === "archive") {
     await db
@@ -42,6 +42,25 @@ export async function PATCH(request: Request, { params }: Params) {
     const [updated] = await db
       .update(projects)
       .set({ archivedAt: null, updatedAt: new Date() })
+      .where(and(eq(projects.id, id), eq(projects.userId, USER_ID)))
+      .returning()
+    if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    revalidatePath("/", "layout")
+    return NextResponse.json(updated)
+  }
+
+  if (action === "links") {
+    const [updated] = await db
+      .update(projects)
+      .set({
+        link1Url: link1Url ?? null,
+        link1Label: link1Label ?? null,
+        link2Url: link2Url ?? null,
+        link2Label: link2Label ?? null,
+        link3Url: link3Url ?? null,
+        link3Label: link3Label ?? null,
+        updatedAt: new Date(),
+      })
       .where(and(eq(projects.id, id), eq(projects.userId, USER_ID)))
       .returning()
     if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 })
