@@ -1,25 +1,51 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Pencil, Trash2, Check, X } from "lucide-react"
+import { useState, useTransition } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { Pencil, Trash2, Check, X, Archive, ArchiveRestore, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 type ProjectRow = {
   id: string
   name: string
   issueCount: number
+  openIssueCount: number
+  archivedAt: Date | null
   createdAt: Date
   updatedAt: Date
 }
 
-export function ProjectList({ projects, isDemo }: { projects: ProjectRow[]; isDemo?: boolean }) {
+type Props = {
+  projects: ProjectRow[]
+  isDemo?: boolean
+  showArchived: boolean
+}
+
+export function ProjectList({ projects, isDemo, showArchived }: Props) {
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState("")
+  const [archivingProject, setArchivingProject] = useState<ProjectRow | null>(null)
+  const [isPending, startTransition] = useTransition()
+
+  function toggleArchivedView() {
+    const params = new URLSearchParams(searchParams.toString())
+    if (showArchived) params.delete("showArchived")
+    else params.set("showArchived", "true")
+    router.push(`${pathname}?${params.toString()}`)
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
@@ -59,15 +85,50 @@ export function ProjectList({ projects, isDemo }: { projects: ProjectRow[]; isDe
     router.refresh()
   }
 
+  async function handleArchiveConfirm() {
+    if (!archivingProject) return
+    await fetch(`/api/projects/${archivingProject.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "archive" }),
+    })
+    setArchivingProject(null)
+    startTransition(() => router.refresh())
+  }
+
+  async function handleUnarchive(id: string) {
+    await fetch(`/api/projects/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "unarchive" }),
+    })
+    startTransition(() => router.refresh())
+  }
+
+  const hasOpenIssues = (archivingProject?.openIssueCount ?? 0) > 0
+
   return (
     <div className="mx-auto max-w-3xl p-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-lg font-semibold">Projects</h1>
-        {!isDemo && (
-          <Button size="sm" onClick={() => setCreating(true)}>
-            New project
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleArchivedView}
+            className={`flex items-center gap-1.5 rounded-btn px-2.5 py-1 text-xs font-medium transition-colors ${
+              showArchived
+                ? "bg-accent/20 text-accent"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Archive className="h-3.5 w-3.5" />
+            {showArchived ? "Viewing archived" : "Show archived"}
+          </button>
+          {!isDemo && !showArchived && (
+            <Button size="sm" onClick={() => setCreating(true)}>
+              New project
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="divide-y rounded-md border">
@@ -93,13 +154,13 @@ export function ProjectList({ projects, isDemo }: { projects: ProjectRow[]; isDe
 
         {projects.length === 0 && !creating && (
           <div className="px-4 py-12 text-center text-sm text-muted-foreground">
-            No projects yet.
+            {showArchived ? "No archived projects." : "No projects yet."}
           </div>
         )}
 
         {projects.map((p) => (
           <div key={p.id} className="flex items-center gap-3 px-3 py-2.5">
-            {!isDemo && editingId === p.id ? (
+            {!isDemo && !showArchived && editingId === p.id ? (
               <>
                 <Input
                   autoFocus
@@ -125,20 +186,76 @@ export function ProjectList({ projects, isDemo }: { projects: ProjectRow[]; isDe
                   {p.issueCount} {p.issueCount === 1 ? "issue" : "issues"}
                 </span>
                 {!isDemo && (
-                  <>
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => startEdit(p)}>
-                      <Pencil className="h-3.5 w-3.5" />
+                  showArchived ? (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                      onClick={() => handleUnarchive(p.id)}
+                      title="Unarchive project"
+                    >
+                      <ArchiveRestore className="h-3.5 w-3.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(p.id)}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </>
+                  ) : (
+                    <>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => startEdit(p)}>
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-muted-foreground hover:text-amber-600"
+                        onClick={() => setArchivingProject(p)}
+                        title="Archive project"
+                      >
+                        <Archive className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(p.id)}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </>
+                  )
                 )}
               </>
             )}
           </div>
         ))}
       </div>
+
+      {/* Archive confirmation dialog */}
+      <Dialog open={!!archivingProject} onOpenChange={(open) => { if (!open) setArchivingProject(null) }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Archive &ldquo;{archivingProject?.name}&rdquo;?</DialogTitle>
+          </DialogHeader>
+
+          {hasOpenIssues ? (
+            <div className="flex gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-500" />
+              <p className="text-sm text-amber-800 dark:text-amber-300">
+                <span className="font-medium">{archivingProject?.openIssueCount} open {archivingProject?.openIssueCount === 1 ? "issue" : "issues"}</span> will be archived along with this project.
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              All issues in this project are Done or already archived. Ready to archive.
+            </p>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setArchivingProject(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleArchiveConfirm}
+              disabled={isPending}
+              className={hasOpenIssues ? "bg-amber-600 hover:bg-amber-700 text-white" : ""}
+            >
+              {hasOpenIssues ? "Archive anyway" : "Archive project"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

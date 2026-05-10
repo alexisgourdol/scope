@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { projects } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
 import { getSession } from "@/lib/session"
 import { Sidebar } from "@/components/sidebar"
@@ -9,7 +9,7 @@ import { HelpModal } from "@/components/help-modal"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const [userProjects, session] = await Promise.all([
-    db.select().from(projects).where(eq(projects.userId, USER_ID)).orderBy(projects.name),
+    db.select().from(projects).where(and(eq(projects.userId, USER_ID), isNull(projects.archivedAt))).orderBy(projects.name),
     getSession(),
   ])
 
