@@ -13,9 +13,15 @@ import {
   useSensor,
   useSensors,
   useDroppable,
-  useDraggable,
   closestCenter,
 } from "@dnd-kit/core"
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { IssuePriorityIcon } from "@/components/issue-priority-icon"
 import { IssueStatusIcon } from "@/components/issue-status-icon"
 
@@ -46,11 +52,12 @@ function KanbanCard({
   issue: IssueRow
   isDragging?: boolean
 }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: issue.id })
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: issue.id })
 
-  const style = transform
-    ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
-    : undefined
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
 
   return (
     <div
@@ -62,7 +69,7 @@ function KanbanCard({
         isDragging ? "opacity-50 shadow-card" : "cursor-grab hover:shadow-card active:cursor-grabbing"
       }`}
     >
-      <div className="mb-2 flex items-start gap-2">
+      <div className="mb-2 flex items-center gap-2">
         <IssuePriorityIcon priority={issue.priority} />
         <Link
           href={`/issues/${issue.id}`}
@@ -73,7 +80,7 @@ function KanbanCard({
         </Link>
       </div>
       {issue.projectName && (
-        <p className="text-xs text-muted-foreground">{issue.projectName}</p>
+        <p className="pl-[18px] text-xs text-muted-foreground">{issue.projectName}</p>
       )}
     </div>
   )
@@ -107,9 +114,11 @@ function KanbanColumn({
           isOver ? "border-accent/50 bg-accent/5" : "border-border bg-muted/30"
         }`}
       >
-        {issues.map((issue) => (
-          <KanbanCard key={issue.id} issue={issue} />
-        ))}
+        <SortableContext items={issues.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          {issues.map((issue) => (
+            <KanbanCard key={issue.id} issue={issue} />
+          ))}
+        </SortableContext>
       </div>
     </div>
   )
@@ -133,7 +142,15 @@ export function KanbanView({ issues: initialIssues }: { issues: IssueRow[] }) {
   }
 
   function handleDragOver({ over }: DragOverEvent) {
-    setOverColumn(over ? (over.id as Status) : null)
+    if (!over) { setOverColumn(null); return }
+    // over.id is either a column status or another card's id
+    const col = STATUS_ORDER.find((s) => s === over.id)
+    if (col) {
+      setOverColumn(col)
+    } else {
+      const overIssue = issues.find((i) => i.id === over.id)
+      setOverColumn(overIssue ? (overIssue.status as Status) : null)
+    }
   }
 
   function handleDragEnd({ active, over }: DragEndEvent) {
@@ -141,20 +158,38 @@ export function KanbanView({ issues: initialIssues }: { issues: IssueRow[] }) {
     setOverColumn(null)
     if (!over) return
 
-    const newStatus = over.id as Status
-    const issue = issues.find((i) => i.id === active.id)
-    if (!issue || issue.status === newStatus) return
+    const activeIssue = issues.find((i) => i.id === active.id)
+    if (!activeIssue) return
 
-    // optimistic update
-    setIssues((prev) =>
-      prev.map((i) => (i.id === issue.id ? { ...i, status: newStatus } : i))
-    )
+    // Determine target column: over could be a column id or a card id
+    const targetCol = STATUS_ORDER.find((s) => s === over.id)
+      ?? (issues.find((i) => i.id === over.id)?.status as Status | undefined)
 
-    fetch(`/api/issues/${issue.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    }).then(() => startTransition(() => router.refresh()))
+    if (!targetCol) return
+
+    const sameColumn = activeIssue.status === targetCol
+
+    if (sameColumn) {
+      // Reorder within column
+      setIssues((prev) => {
+        const colItems = prev.filter((i) => i.status === targetCol)
+        const others = prev.filter((i) => i.status !== targetCol)
+        const oldIdx = colItems.findIndex((i) => i.id === active.id)
+        const newIdx = colItems.findIndex((i) => i.id === over.id)
+        if (oldIdx === -1 || newIdx === -1 || oldIdx === newIdx) return prev
+        return [...others, ...arrayMove(colItems, oldIdx, newIdx)]
+      })
+    } else {
+      // Move to different column
+      setIssues((prev) =>
+        prev.map((i) => (i.id === activeIssue.id ? { ...i, status: targetCol } : i))
+      )
+      fetch(`/api/issues/${activeIssue.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: targetCol }),
+      }).then(() => startTransition(() => router.refresh()))
+    }
   }
 
   const columns = STATUS_ORDER.map((s) => ({
@@ -186,14 +221,14 @@ export function KanbanView({ issues: initialIssues }: { issues: IssueRow[] }) {
       <DragOverlay>
         {activeIssue ? (
           <div className="w-64 rounded-md border bg-background p-3 shadow-card opacity-90">
-            <div className="mb-2 flex items-start gap-2">
+            <div className="mb-2 flex items-center gap-2">
               <IssuePriorityIcon priority={activeIssue.priority} />
               <span className="line-clamp-2 flex-1 text-sm font-medium leading-snug">
                 {activeIssue.title}
               </span>
             </div>
             {activeIssue.projectName && (
-              <p className="text-xs text-muted-foreground">{activeIssue.projectName}</p>
+              <p className="pl-[18px] text-xs text-muted-foreground">{activeIssue.projectName}</p>
             )}
           </div>
         ) : null}
