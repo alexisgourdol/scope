@@ -10,10 +10,24 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"DM Sans"', "sans-serif"],
+        mono: ['"JetBrains Mono"', "monospace"],
+        head: ['"DM Sans"', "sans-serif"],
+      },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm:   "var(--radius-sm)",
+        md:   "var(--radius-md)",
+        btn:  "var(--radius-btn)",
+        lg:   "var(--radius-card)",
+        xl:   "var(--radius-lg)",
+        pill: "var(--radius-pill)",
+      },
+      boxShadow: {
+        card:        "var(--shadow-card)",
+        "card-dark": "var(--shadow-card-dark)",
+        cta:         "var(--shadow-cta)",
+        "cta-hover": "var(--shadow-cta-hover)",
       },
       colors: {
         background: "var(--background)",

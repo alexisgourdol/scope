@@ -1,5 +1,5 @@
 const CONFIG = {
-  none: "bg-gray-300 dark:bg-gray-600",
+  none: "bg-muted-foreground/30",
   low: "bg-blue-400",
   medium: "bg-yellow-400",
   high: "bg-orange-500",

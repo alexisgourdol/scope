@@ -1,8 +1,8 @@
 import { Circle, CircleDot, CircleCheckBig } from "lucide-react"
 
 const CONFIG = {
-  backlog: { icon: Circle, className: "text-gray-400" },
-  todo: { icon: Circle, className: "text-gray-600" },
+  backlog: { icon: Circle, className: "text-muted-foreground/60" },
+  todo: { icon: Circle, className: "text-muted-foreground" },
   in_progress: { icon: CircleDot, className: "text-amber-500" },
   done: { icon: CircleCheckBig, className: "text-green-500" },
 } as const
