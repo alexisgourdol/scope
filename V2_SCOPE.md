@@ -5,7 +5,7 @@ This file is a contract with myself. It defines exactly what V2 is, and — more
 **Project:** Scope — a minimal, single-user issue tracker
 **Build window:** TBD
 **Stack:** unchanged from V1 — Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui + Drizzle + Postgres (Supabase) + Vercel
-**Last edited:** 2026-05-10
+**Last edited:** 2026-05-10 (V2.1 additions)
 
 ---
 
@@ -36,6 +36,26 @@ This file is a contract with myself. It defines exactly what V2 is, and — more
 - Project filter carries over from list view — same URL param, same data filter
 - Archived issues never appear on the board
 
+### Search *(V2.1 addition)*
+- Search bar in the issues page header; filters by `?q=` URL param (preserved on refresh)
+- Server-side filter: `WHERE title ILIKE '%q%' OR description ILIKE '%q%'`
+- No schema changes — operates on existing `issues` columns
+
+### Project archiving *(V2.1 addition)*
+- Soft-delete for projects — same `archived_at` nullable timestamp pattern as issue archiving
+- DB: `archived_at timestamp` column added to `projects` table (nullable; `null` = active)
+- **Two-state confirmation dialog** before archiving:
+  - **Warn state**: one or more issues are not Done/Archived → "X issues are still open and will be set to Archived. Proceed?"
+  - **Inform state**: all issues are Done or Archived → "All issues are Done or Archived. Confirm project archiving?"
+- Archived projects hidden from the projects list by default; "Show archived" toggle surfaces them
+- Archiving a project also bulk-archives any open issues within it
+
+### Project links *(V2.1 addition)*
+- Attach up to 3 URLs (GitHub repo, docs, design file, etc.) with an optional label to any project
+- DB: 6 nullable columns on `projects` — `link1_url`, `link1_label`, `link2_url`, `link2_label`, `link3_url`, `link3_label`
+- Editable section on the project detail page (`/projects/[id]`); blank slots hidden in read mode
+- Displayed as clickable links with label (or truncated URL if no label)
+
 ---
 
 ## Explicitly OUT of V2
@@ -45,9 +65,8 @@ These are not "maybe later" — they are committed-out. If I want one of them, i
 - Google SSO / any real auth → V3
 - Cmd+K command palette → V3
 - Multi-user / sharing / teams
-- Activity log per issue
-- GitHub integration
-- Search
+- Activity log per issue → V3
+- GitHub integration → V3
 - Inline issue creation (press C, type, enter — no modal)
 - Saved filters as named views
 - Keyboard navigation between issues (J/K)
@@ -75,3 +94,4 @@ If any of these fail, I fix the existing scope. I do not add features to compens
 Any change to this file gets logged here with a date and reason.
 
 - [2026-05-10] — Initial V2 scope locked. SSO and Cmd+K moved to V3.
+- [2026-05-10] — V2.1: Added Search, Project archiving, and Project links after V2 core shipped ahead of schedule. Activity log and GitHub integration remain in V3 (non-trivial schema + integration work). Search was pulled from V3 (zero schema cost). Project archiving reuses the issue soft-delete pattern. Project links are bounded new columns on the projects table.

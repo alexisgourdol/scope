@@ -1,6 +1,6 @@
-# 🔭 Scope
+# Scope
 
-A minimal, single-user issue tracker — built in ~~14~~ 2 days with Claude Code.
+A minimal, single-user issue tracker — built with Claude Code.
 
 Scope is a personal project management tool inspired by Linear's clean design, stripped down to the features that actually matter for solo work: issues, projects, statuses, and keyboard shortcuts. Nothing more.
 
@@ -9,16 +9,20 @@ Scope is a personal project management tool inspired by Linear's clean design, s
 **[scope-gamma-seven.vercel.app](https://scope-gamma-seven.vercel.app)**
 
 Password: `scopedemo`
-In demo mode, creating and modifying is restricted
+In demo mode, creating and modifying is restricted.
 
 ## Features
 
 - Issues with title, description, status, and priority
 - Projects with cascade filtering
 - Status workflow: Backlog → Todo → In Progress → Done
+- **Archive** — soft-delete issues individually or in bulk; restore at any time
+- **Multi-select** — checkbox on hover, floating action bar to bulk-change status or archive
+- **Board view** — Kanban layout with drag-and-drop between columns and within-column reordering
+- **List / Board toggle** — preference persists across navigation via cookie
+- **uaidata design system** — warm palette (amber `#F59E0B`, off-white `#FAF9F6`, near-black `#1C1C1A`), DM Sans + JetBrains Mono, full dark mode token set
+- Dark mode — manual toggle in sidebar + system preference on first visit
 - Keyboard shortcuts (`C` to create, `1–4` to set status, `E` to edit title)
-- Filterable issue list by project
-- Dark mode (follows system preference)
 - Responsive layout (mobile + desktop)
 
 ## Stack
@@ -26,7 +30,7 @@ In demo mode, creating and modifying is restricted
 | Layer     | Choice                                            |
 | --------- | ------------------------------------------------- |
 | Framework | Next.js 15 (App Router)                           |
-| Language  | TypeScript                                        |
+| Language  | TypeScript (strict)                               |
 | Styling   | Tailwind CSS + shadcn/ui                          |
 | ORM       | Drizzle                                           |
 | Database  | Postgres (Supabase in production, Docker locally) |
@@ -66,11 +70,12 @@ In demo mode, creating and modifying is restricted
 
 ### Environment variables
 
-| Variable       | Description                             |
-| -------------- | --------------------------------------- |
-| `DATABASE_URL` | Postgres connection string              |
-| `AUTH_SECRET`  | Admin password (keep private)           |
-| `DEMO_SECRET`  | Read-only demo password (safe to share) |
+| Variable            | Description                                    |
+| ------------------- | ---------------------------------------------- |
+| `DATABASE_URL`      | Postgres connection string (pooled, port 6543) |
+| `DIRECT_DATABASE_URL` | Postgres connection string (direct, port 5432) |
+| `AUTH_SECRET`       | Admin password (keep private)                  |
+| `DEMO_SECRET`       | Read-only demo password (safe to share)        |
 
 ## Built with Claude Code
 
