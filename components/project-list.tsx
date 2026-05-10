@@ -18,6 +18,7 @@ type ProjectRow = {
   name: string
   issueCount: number
   openIssueCount: number
+  doneActiveCount: number
   archivedAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -38,6 +39,7 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState("")
   const [archivingProject, setArchivingProject] = useState<ProjectRow | null>(null)
+  const [archiveDone, setArchiveDone] = useState(true)
   const [isPending, startTransition] = useTransition()
 
   function toggleArchivedView() {
@@ -90,7 +92,7 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
     await fetch(`/api/projects/${archivingProject.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "archive" }),
+      body: JSON.stringify({ action: "archive", archiveDone }),
     })
     setArchivingProject(null)
     startTransition(() => router.refresh())
@@ -205,7 +207,7 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
                         size="icon"
                         variant="ghost"
                         className="h-7 w-7 text-muted-foreground hover:text-amber-600"
-                        onClick={() => setArchivingProject(p)}
+                        onClick={() => { setArchivingProject(p); setArchiveDone(true) }}
                         title="Archive project"
                       >
                         <Archive className="h-3.5 w-3.5" />
@@ -229,17 +231,33 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
             <DialogTitle>Archive &ldquo;{archivingProject?.name}&rdquo;?</DialogTitle>
           </DialogHeader>
 
-          {hasOpenIssues ? (
+          {hasOpenIssues && (
             <div className="flex gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-500" />
               <p className="text-sm text-amber-800 dark:text-amber-300">
                 <span className="font-medium">{archivingProject?.openIssueCount} open {archivingProject?.openIssueCount === 1 ? "issue" : "issues"}</span> will be archived along with this project.
               </p>
             </div>
-          ) : (
+          )}
+
+          {!hasOpenIssues && (archivingProject?.doneActiveCount ?? 0) === 0 && (
             <p className="text-sm text-muted-foreground">
-              All issues in this project are Done or already archived. Ready to archive.
+              All issues in this project are already archived. Ready to archive.
             </p>
+          )}
+
+          {(archivingProject?.doneActiveCount ?? 0) > 0 && (
+            <label className="flex cursor-pointer items-center gap-3 rounded-md border border-border p-3 hover:bg-muted/50">
+              <input
+                type="checkbox"
+                checked={archiveDone}
+                onChange={(e) => setArchiveDone(e.target.checked)}
+                className="h-4 w-4 accent-accent"
+              />
+              <span className="text-sm">
+                Also archive {archivingProject?.doneActiveCount} Done {archivingProject?.doneActiveCount === 1 ? "issue" : "issues"}
+              </span>
+            </label>
           )}
 
           <DialogFooter>

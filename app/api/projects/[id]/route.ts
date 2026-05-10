@@ -15,13 +15,19 @@ export async function PATCH(request: Request, { params }: Params) {
 
   const { id } = await params
   const body = await request.json()
-  const { name, action } = body
+  const { name, action, archiveDone } = body
 
   if (action === "archive") {
     await db
       .update(issues)
       .set({ archivedAt: new Date(), updatedAt: new Date() })
-      .where(and(eq(issues.projectId, id), isNull(issues.archivedAt), ne(issues.status, "done")))
+      .where(
+        and(
+          eq(issues.projectId, id),
+          isNull(issues.archivedAt),
+          archiveDone ? undefined : ne(issues.status, "done")
+        )
+      )
     const [updated] = await db
       .update(projects)
       .set({ archivedAt: new Date(), updatedAt: new Date() })
