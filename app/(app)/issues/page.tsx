@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { issues, projects } from "@/db/schema"
-import { and, desc, eq, isNotNull, isNull } from "drizzle-orm"
+import { and, desc, eq, ilike, isNotNull, isNull, or } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
 import { getSession } from "@/lib/session"
 import { NewIssueButton } from "@/components/new-issue-button"
@@ -8,6 +8,7 @@ import { ProjectFilter } from "@/components/project-filter"
 import { IssueList } from "@/components/issue-list"
 import { KanbanView } from "@/components/kanban-view"
 import { ViewToggle } from "@/components/view-toggle"
+import { SearchBar } from "@/components/search-bar"
 import { Suspense } from "react"
 import { cookies } from "next/headers"
 
@@ -15,10 +16,12 @@ type SearchParams = Promise<{
   project?: string
   showArchived?: string
   view?: string
+  q?: string
 }>
 
 export default async function IssuesPage({ searchParams }: { searchParams: SearchParams }) {
-  const { project: projectFilter, showArchived: showArchivedParam, view } = await searchParams
+  const { project: projectFilter, showArchived: showArchivedParam, view, q } = await searchParams
+  const searchQuery = q?.trim() ?? ""
   const showArchived = showArchivedParam === "true"
   const cookieStore = await cookies()
   const savedView = cookieStore.get("scope_view")?.value
@@ -27,7 +30,10 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
   const baseWhere = and(
     eq(issues.userId, USER_ID),
     showArchived ? isNotNull(issues.archivedAt) : isNull(issues.archivedAt),
-    projectFilter ? eq(issues.projectId, projectFilter) : undefined
+    projectFilter ? eq(issues.projectId, projectFilter) : undefined,
+    searchQuery
+      ? or(ilike(issues.title, `%${searchQuery}%`), ilike(issues.description, `%${searchQuery}%`))
+      : undefined
   )
 
   const [session, issueRows, projectList] = await Promise.all([
@@ -55,6 +61,9 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
         <h1 className="text-lg font-semibold">Issues</h1>
         <div className="flex items-center gap-2">
           <Suspense>
+            <SearchBar key={searchQuery} defaultValue={searchQuery} />
+          </Suspense>
+          <Suspense>
             <ProjectFilter projects={projectList} />
           </Suspense>
           <Suspense>
@@ -75,6 +84,7 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
           issues={issueRows}
           showArchived={showArchived}
           projectFilter={projectFilter}
+          searchQuery={searchQuery}
           isDemo={session === "demo"}
         />
       )}

@@ -45,10 +45,11 @@ type Props = {
   issues: IssueRow[]
   showArchived: boolean
   projectFilter?: string
+  searchQuery?: string
   isDemo: boolean
 }
 
-export function IssueList({ issues, showArchived, projectFilter, isDemo }: Props) {
+export function IssueList({ issues, showArchived, projectFilter, searchQuery, isDemo }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -116,13 +117,15 @@ export function IssueList({ issues, showArchived, projectFilter, isDemo }: Props
       {issues.length === 0 ? (
         <div className="py-20 text-center text-muted-foreground">
           <p className="text-sm">
-            {showArchived
+            {searchQuery
+              ? `No issues matching "${searchQuery}".`
+              : showArchived
               ? "No archived issues."
               : projectFilter
               ? "No issues in this project."
               : "No issues yet."}
           </p>
-          {!showArchived && (
+          {!showArchived && !searchQuery && (
             <p className="mt-1 text-xs">
               Press{" "}
               <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">

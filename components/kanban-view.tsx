@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -130,6 +130,8 @@ export function KanbanView({ issues: initialIssues }: { issues: IssueRow[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [overColumn, setOverColumn] = useState<Status | null>(null)
   const [, startTransition] = useTransition()
+
+  useEffect(() => { setIssues(initialIssues) }, [initialIssues])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
