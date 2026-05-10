@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import type { Project } from "@/db/schema"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: boolean }) {
   const pathname = usePathname()
@@ -32,6 +33,9 @@ export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: bo
             demo
           </span>
         )}
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* On mobile: horizontal nav row. On desktop: vertical nav. */}

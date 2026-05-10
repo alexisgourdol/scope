@@ -70,37 +70,37 @@
   .dark {
     color-scheme: dark;
 
-    /* ── uaidata color tokens (dark) ───────────────────────────────── */
-    --background:           oklch(0.108 0.004 82);   /* #141412 */
-    --foreground:           oklch(0.95 0.007 89);    /* #F0EFE8 */
-    --card:                 oklch(0.148 0.004 82);   /* #1E1D1B */
-    --card-foreground:      oklch(0.95 0.007 89);
-    --popover:              oklch(0.148 0.004 82);
-    --popover-foreground:   oklch(0.95 0.007 89);
-    --primary:              oklch(0.95 0.007 89);
-    --primary-foreground:   oklch(0.142 0.005 82);
-    --secondary:            oklch(0.127 0.004 82);   /* #191817 */
-    --secondary-foreground: oklch(0.95 0.007 89);
-    --muted:                oklch(0.127 0.004 82);
-    --muted-foreground:     oklch(0.578 0.005 82);   /* #8A8882 */
-    --accent:               oklch(0.798 0.162 78);   /* #FBBF24 lighter amber */
-    --accent-foreground:    oklch(0.108 0.004 82);
+    /* ── uaidata color tokens (dark) — exact hex from uaidata.css ──── */
+    --background:           #141412;
+    --foreground:           #F0EFE8;
+    --card:                 #1E1D1B;
+    --card-foreground:      #F0EFE8;
+    --popover:              #1E1D1B;
+    --popover-foreground:   #F0EFE8;
+    --primary:              #F0EFE8;
+    --primary-foreground:   #141412;
+    --secondary:            #191817;
+    --secondary-foreground: #F0EFE8;
+    --muted:                #191817;
+    --muted-foreground:     #8A8882;
+    --accent:               #FBBF24;
+    --accent-foreground:    #141412;
     --destructive:          oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.985 0 0);
-    --border:               oklch(0.205 0.005 82);   /* #2E2D2A */
-    --input:                oklch(0.205 0.005 82);
-    --ring:                 oklch(0.798 0.162 78);
-    --sidebar:              oklch(0.148 0.004 82);
-    --sidebar-foreground:   oklch(0.95 0.007 89);
-    --sidebar-primary:      oklch(0.798 0.162 78);
-    --sidebar-primary-foreground: oklch(0.108 0.004 82);
-    --sidebar-accent:       oklch(0.127 0.004 82);
-    --sidebar-accent-foreground: oklch(0.95 0.007 89);
-    --sidebar-border:       oklch(0.205 0.005 82);
-    --sidebar-ring:         oklch(0.798 0.162 78);
+    --destructive-foreground: #F0EFE8;
+    --border:               #2E2D2A;
+    --input:                #2E2D2A;
+    --ring:                 #FBBF24;
+    --sidebar:              #1E1D1B;
+    --sidebar-foreground:   #F0EFE8;
+    --sidebar-primary:      #FBBF24;
+    --sidebar-primary-foreground: #141412;
+    --sidebar-accent:       #191817;
+    --sidebar-accent-foreground: #F0EFE8;
+    --sidebar-border:       #2E2D2A;
+    --sidebar-ring:         #FBBF24;
 
     /* ── uaidata extra tokens (dark) ───────────────────────────────── */
-    --accent-hover:         oklch(0.73 0.162 71);
+    --accent-hover:         #F59E0B;
     --accent-subtle:        rgba(251, 191, 36, 0.12);
     --shadow-card:          0 8px 32px rgba(0, 0, 0, 0.30);
     --shadow-card-dark:     0 12px 40px rgba(0, 0, 0, 0.50);
