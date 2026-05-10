@@ -206,7 +206,7 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-7 w-7 text-muted-foreground hover:text-amber-600"
+                        className="h-7 w-7 text-muted-foreground hover:text-accent"
                         onClick={() => { setArchivingProject(p); setArchiveDone(true) }}
                         title="Archive project"
                       >
@@ -232,9 +232,9 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
           </DialogHeader>
 
           {hasOpenIssues && (
-            <div className="flex gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-500" />
-              <p className="text-sm text-amber-800 dark:text-amber-300">
+            <div className="flex gap-3 rounded-md border border-accent/30 bg-accent-subtle p-3">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <p className="text-sm text-foreground">
                 <span className="font-medium">{archivingProject?.openIssueCount} open {archivingProject?.openIssueCount === 1 ? "issue" : "issues"}</span> will be archived along with this project.
               </p>
             </div>
@@ -267,7 +267,7 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
             <Button
               onClick={handleArchiveConfirm}
               disabled={isPending}
-              className={hasOpenIssues ? "bg-amber-600 hover:bg-amber-700 text-white" : ""}
+              className={hasOpenIssues ? "bg-accent hover:bg-accent-hover text-accent-foreground" : ""}
             >
               {hasOpenIssues ? "Archive anyway" : "Archive project"}
             </Button>

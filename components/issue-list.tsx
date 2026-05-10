@@ -207,7 +207,7 @@ export function IssueList({ issues, showArchived, projectFilter, searchQuery, is
       {/* floating bulk action bar */}
       {selectedIds.size > 0 && (
         <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2">
-          <div className="flex items-center gap-3 rounded-pill bg-[#1C1C1A] px-4 py-2.5 shadow-card-dark dark:bg-[#2E2D2A]">
+          <div className="flex items-center gap-3 rounded-pill bg-surface-invert px-4 py-2.5 shadow-card-dark">
             <span className="text-sm font-medium text-white">
               {selectedIds.size} selected
             </span>

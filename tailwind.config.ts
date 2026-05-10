@@ -55,6 +55,8 @@ const config: Config = {
         accent: {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)",
+          hover: "var(--accent-hover)",
+          subtle: "var(--accent-subtle)",
         },
         destructive: {
           DEFAULT: "var(--destructive)",
@@ -72,6 +74,23 @@ const config: Config = {
           "accent-foreground": "var(--sidebar-accent-foreground)",
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
+        },
+        "surface-invert": {
+          DEFAULT: "var(--surface-invert)",
+          foreground: "var(--surface-invert-text)",
+        },
+        status: {
+          backlog:  "var(--status-backlog)",
+          todo:     "var(--status-todo)",
+          progress: "var(--status-progress)",
+          done:     "var(--status-done)",
+        },
+        priority: {
+          none:    "var(--priority-none)",
+          low:     "var(--priority-low)",
+          medium:  "var(--priority-medium)",
+          high:    "var(--priority-high)",
+          urgent:  "var(--priority-urgent)",
         },
       },
     },

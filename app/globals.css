@@ -44,6 +44,23 @@
     --shadow-cta:           0 4px 20px rgba(245, 158, 11, 0.30);
     --shadow-cta-hover:     0 8px 28px rgba(245, 158, 11, 0.40);
 
+    /* ── always-dark surfaces (floating pill, future stats/footer) ── */
+    --surface-invert:       #1C1C1A;
+    --surface-invert-text:  #FFFFFF;
+
+    /* ── status tokens (issue workflow) ────────────────────────────── */
+    --status-backlog:       #9CA3AF;
+    --status-todo:          #6366F1;   /* indigo — uaidata portfolio palette */
+    --status-progress:      #F59E0B;   /* amber — accent */
+    --status-done:          #0D9488;   /* teal — uaidata portfolio palette */
+
+    /* ── priority tokens ───────────────────────────────────────────── */
+    --priority-none:        rgba(107, 106, 102, 0.30);
+    --priority-low:         #60A5FA;
+    --priority-medium:      #FACC15;
+    --priority-high:        #F97316;
+    --priority-urgent:      #EF4444;
+
     /* ── radius scale ──────────────────────────────────────────────── */
     --radius:               0.875rem;   /* 14px — shadcn base */
     --radius-sm:            0.375rem;   /* 6px  */
@@ -106,6 +123,24 @@
     --shadow-card-dark:     0 12px 40px rgba(0, 0, 0, 0.50);
     --shadow-cta:           0 4px 20px rgba(245, 158, 11, 0.35);
     --shadow-cta-hover:     0 8px 28px rgba(245, 158, 11, 0.45);
+
+    /* ── always-dark surfaces (dark) ───────────────────────────────── */
+    /* Pill lifts off the page bg (#141412) — slightly lighter, not deeper. */
+    --surface-invert:       #2E2D2A;
+    --surface-invert-text:  #FFFFFF;
+
+    /* ── status tokens (dark) ──────────────────────────────────────── */
+    --status-backlog:       #6B6A66;
+    --status-todo:          #818CF8;
+    --status-progress:      #FBBF24;
+    --status-done:          #14B8A6;
+
+    /* ── priority tokens (dark) ────────────────────────────────────── */
+    --priority-none:        rgba(138, 136, 130, 0.40);
+    --priority-low:         #60A5FA;
+    --priority-medium:      #FACC15;
+    --priority-high:        #FB923C;
+    --priority-urgent:      #F87171;
   }
 
   * {

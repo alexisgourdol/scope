@@ -1,10 +1,10 @@
 import { Circle, CircleDot, CircleCheckBig } from "lucide-react"
 
 const CONFIG = {
-  backlog: { icon: Circle, className: "text-muted-foreground/60" },
-  todo: { icon: Circle, className: "text-muted-foreground" },
-  in_progress: { icon: CircleDot, className: "text-amber-500" },
-  done: { icon: CircleCheckBig, className: "text-green-500" },
+  backlog:     { icon: Circle,         className: "text-status-backlog" },
+  todo:        { icon: Circle,         className: "text-status-todo" },
+  in_progress: { icon: CircleDot,      className: "text-status-progress" },
+  done:        { icon: CircleCheckBig, className: "text-status-done" },
 } as const
 
 type Status = keyof typeof CONFIG

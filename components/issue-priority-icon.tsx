@@ -1,9 +1,9 @@
 const CONFIG = {
-  none: "bg-muted-foreground/30",
-  low: "bg-blue-400",
-  medium: "bg-yellow-400",
-  high: "bg-orange-500",
-  urgent: "bg-red-500",
+  none:    "bg-priority-none",
+  low:     "bg-priority-low",
+  medium:  "bg-priority-medium",
+  high:    "bg-priority-high",
+  urgent:  "bg-priority-urgent",
 } as const
 
 type Priority = keyof typeof CONFIG
