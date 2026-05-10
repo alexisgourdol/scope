@@ -204,18 +204,18 @@ export function IssueList({ issues, showArchived, projectFilter, isDemo }: Props
       {/* floating bulk action bar */}
       {selectedIds.size > 0 && (
         <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2">
-          <div className="flex items-center gap-3 rounded-pill bg-foreground px-4 py-2.5 shadow-card-dark">
-            <span className="text-sm font-medium text-background">
+          <div className="flex items-center gap-3 rounded-pill bg-[#1C1C1A] px-4 py-2.5 shadow-card-dark dark:bg-[#2E2D2A]">
+            <span className="text-sm font-medium text-white">
               {selectedIds.size} selected
             </span>
 
-            <div className="h-4 w-px bg-background/20" />
+            <div className="h-4 w-px bg-white/20" />
 
             {/* status dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger
                 disabled={isPending || isDemo}
-                className="flex items-center gap-1 rounded-btn bg-background/15 px-2.5 py-1 text-xs font-medium text-background outline-none transition-colors hover:bg-background/25 disabled:opacity-50"
+                className="flex items-center gap-1 rounded-btn bg-white/15 px-2.5 py-1 text-xs font-medium text-white outline-none transition-colors hover:bg-white/25 disabled:opacity-50"
               >
                 Set status…
                 <ChevronDown className="h-3 w-3 opacity-70" />
@@ -232,7 +232,7 @@ export function IssueList({ issues, showArchived, projectFilter, isDemo }: Props
             <button
               onClick={() => bulkAction(showArchived ? "unarchive" : "archive")}
               disabled={isPending || isDemo}
-              className="flex items-center gap-1.5 rounded-btn bg-background/15 px-2.5 py-1 text-xs font-medium text-background transition-colors hover:bg-background/30 active:bg-background/40 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-btn bg-white/15 px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-white/25 active:bg-white/35 disabled:opacity-50"
             >
               {showArchived ? (
                 <><ArchiveRestore className="h-3.5 w-3.5" /> Unarchive</>
@@ -243,7 +243,7 @@ export function IssueList({ issues, showArchived, projectFilter, isDemo }: Props
 
             <button
               onClick={clearSelection}
-              className="text-xs text-background/60 hover:text-background"
+              className="text-xs text-white/60 hover:text-white"
               aria-label="Clear selection"
             >
               ✕
