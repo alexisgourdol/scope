@@ -36,6 +36,12 @@ export const projects = pgTable("projects", {
     .notNull()
     .references(() => users.id),
   archivedAt: timestamp("archived_at"),
+  link1Url: text("link1_url"),
+  link1Label: text("link1_label"),
+  link2Url: text("link2_url"),
+  link2Label: text("link2_label"),
+  link3Url: text("link3_url"),
+  link3Label: text("link3_label"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

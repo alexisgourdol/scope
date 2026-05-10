@@ -29,6 +29,13 @@
       "when": 1778445959615,
       "tag": "0003_eager_penance",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778452816013,
+      "tag": "0004_outgoing_professor_monster",
+      "breakpoints": true
     }
   ]
 }
