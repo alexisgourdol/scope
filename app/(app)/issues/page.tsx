@@ -9,6 +9,7 @@ import { IssueList } from "@/components/issue-list"
 import { KanbanView } from "@/components/kanban-view"
 import { ViewToggle } from "@/components/view-toggle"
 import { Suspense } from "react"
+import { cookies } from "next/headers"
 
 type SearchParams = Promise<{
   project?: string
@@ -19,7 +20,9 @@ type SearchParams = Promise<{
 export default async function IssuesPage({ searchParams }: { searchParams: SearchParams }) {
   const { project: projectFilter, showArchived: showArchivedParam, view } = await searchParams
   const showArchived = showArchivedParam === "true"
-  const activeView = view === "board" ? "board" : "list"
+  const cookieStore = await cookies()
+  const savedView = cookieStore.get("scope_view")?.value
+  const activeView = view === "board" ? "board" : (!view && savedView === "board") ? "board" : "list"
 
   const baseWhere = and(
     eq(issues.userId, USER_ID),

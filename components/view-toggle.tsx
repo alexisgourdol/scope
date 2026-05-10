@@ -9,6 +9,7 @@ export function ViewToggle({ view }: { view: "list" | "board" }) {
   const searchParams = useSearchParams()
 
   function setView(v: "list" | "board") {
+    document.cookie = `scope_view=${v}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
     const params = new URLSearchParams(searchParams.toString())
     if (v === "list") params.delete("view")
     else params.set("view", v)
