@@ -32,16 +32,16 @@ export default async function ProjectDetailPage({ params }: Props) {
   ]
 
   return (
-    <div className="mx-auto max-w-2xl p-8">
+    <div className="max-w-3xl p-4">
       <Link
         href="/projects"
-        className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        className="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         Projects
       </Link>
 
-      <div className="mb-8 flex items-start justify-between">
+      <div className="mb-4 flex items-start justify-between">
         <div>
           <h1 className="text-xl font-semibold">{project.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{issueCount} open {issueCount === 1 ? "issue" : "issues"}</p>
