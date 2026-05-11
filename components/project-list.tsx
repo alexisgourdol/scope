@@ -111,25 +111,30 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl p-8">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Projects</h1>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleArchivedView}
-            className={`flex items-center gap-1.5 rounded-btn px-2.5 py-1 text-xs font-medium transition-colors ${
-              showArchived
-                ? "bg-accent/20 text-accent"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Archive className="h-3.5 w-3.5" />
-            {showArchived ? "Viewing archived" : "Show archived"}
-          </button>
-          {!isDemo && !showArchived && (
-            <Button size="sm" onClick={() => setCreating(true)}>
-              New project
-            </Button>
-          )}
+      <div className="mb-8 space-y-1">
+        <p className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
+          WORKSPACE / PROJECTS
+        </p>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleArchivedView}
+              className={`flex items-center gap-1.5 rounded-btn px-2.5 py-1 text-xs font-medium transition-colors ${
+                showArchived
+                  ? "bg-accent/20 text-accent"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Archive className="h-3.5 w-3.5" />
+              {showArchived ? "Viewing archived" : "Show archived"}
+            </button>
+            {!isDemo && !showArchived && (
+              <Button size="sm" onClick={() => setCreating(true)}>
+                New project
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -57,23 +57,28 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
 
   return (
     <div className="mx-auto max-w-5xl p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Issues</h1>
-        <div className="flex items-center gap-2">
-          <Suspense>
-            <SearchBar key={searchQuery} defaultValue={searchQuery} />
-          </Suspense>
-          <Suspense>
-            <ProjectFilter projects={projectList} />
-          </Suspense>
-          <Suspense>
-            <ViewToggle view={activeView} />
-          </Suspense>
-          <NewIssueButton
-            projects={projectList}
-            isDemo={session === "demo"}
-            defaultProjectId={projectFilter}
-          />
+      <div className="mb-6 space-y-1">
+        <p className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
+          WORKSPACE / ISSUES
+        </p>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold tracking-tight">Issues</h1>
+          <div className="flex items-center gap-2">
+            <Suspense>
+              <SearchBar key={searchQuery} defaultValue={searchQuery} />
+            </Suspense>
+            <Suspense>
+              <ProjectFilter projects={projectList} />
+            </Suspense>
+            <Suspense>
+              <ViewToggle view={activeView} />
+            </Suspense>
+            <NewIssueButton
+              projects={projectList}
+              isDemo={session === "demo"}
+              defaultProjectId={projectFilter}
+            />
+          </div>
         </div>
       </div>
 

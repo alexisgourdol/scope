@@ -124,26 +124,59 @@ export function IssueList({ issues, showArchived, projectFilter, searchQuery, is
       </div>
 
       {issues.length === 0 ? (
-        <div className="py-20 text-center text-muted-foreground">
-          <p className="text-sm">
-            {searchQuery
-              ? `No issues matching "${searchQuery}".`
-              : showArchived
-              ? "No archived issues."
-              : projectFilter
-              ? "No issues in this project."
-              : "No issues yet."}
-          </p>
-          {!showArchived && !searchQuery && (
-            <p className="mt-1 text-xs">
-              Press{" "}
-              <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">
-                C
-              </kbd>{" "}
-              to create one.
-            </p>
-          )}
-        </div>
+        (() => {
+          const empty = searchQuery
+            ? {
+                eyebrow: "NO MATCHES",
+                heading: `Nothing matching "${searchQuery}"`,
+                body: <>Try a different search, or clear the filter.</>,
+              }
+            : showArchived
+            ? {
+                eyebrow: "ARCHIVE EMPTY",
+                heading: "No archived issues",
+                body: <>Issues you archive will show up here.</>,
+              }
+            : projectFilter
+            ? {
+                eyebrow: "EMPTY PROJECT",
+                heading: "No issues yet",
+                body: (
+                  <>
+                    Press{" "}
+                    <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">
+                      C
+                    </kbd>{" "}
+                    to add the first issue to this project.
+                  </>
+                ),
+              }
+            : {
+                eyebrow: "NOTHING HERE YET",
+                heading: "Create your first issue",
+                body: (
+                  <>
+                    Press{" "}
+                    <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-xs">
+                      C
+                    </kbd>{" "}
+                    to start, or click{" "}
+                    <span className="font-medium text-foreground">+ New issue</span>{" "}
+                    above.
+                  </>
+                ),
+              }
+
+          return (
+            <div className="rounded-lg border bg-card p-10 text-center">
+              <p className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
+                {empty.eyebrow}
+              </p>
+              <h3 className="mt-3 text-xl font-bold tracking-tight">{empty.heading}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{empty.body}</p>
+            </div>
+          )
+        })()
       ) : (
         <div className="space-y-8">
           {grouped.map(({ status, label, items }) => (
