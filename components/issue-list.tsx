@@ -148,9 +148,9 @@ export function IssueList({ issues, showArchived, projectFilter, searchQuery, is
         <div className="space-y-8">
           {grouped.map(({ status, label, items }) => (
             <div key={status}>
-              <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <h2 className="mb-2 flex items-center gap-2 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
                 {label}
-                <span className="rounded-pill bg-muted px-1.5 py-0.5 text-xs">
+                <span className="rounded-pill bg-muted px-1.5 py-0.5 font-sans text-xs font-normal normal-case tracking-normal text-muted-foreground">
                   {items.length}
                 </span>
               </h2>
@@ -205,7 +205,7 @@ export function IssueList({ issues, showArchived, projectFilter, searchQuery, is
                           {issue.projectName}
                         </span>
                       )}
-                      <span className="w-16 text-right text-xs text-muted-foreground">
+                      <span className="w-16 text-right font-mono text-[0.7rem] tracking-wide text-muted-foreground">
                         {formatRelative(issue.updatedAt)}
                       </span>
                     </Link>

@@ -68,7 +68,7 @@ export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: bo
 
             {/* Desktop footer + sign out */}
             <div className="hidden border-t border-sidebar-border md:block">
-                <div className="px-4 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.1em] text-muted-foreground">
+                <div className="px-4 py-1.5 font-mono text-[0.72rem] uppercase tracking-[0.1em] text-muted-foreground">
                     <p>scope · v1.0</p>
                     <p className="mt-0.5">
                         Made with{" "}
