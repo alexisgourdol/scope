@@ -11,7 +11,9 @@ Format: short bullet, no need to be precious. I can polish later if I actually p
 These came out of the V2 planning conversation and are pre-loaded:
 
 - **Google SSO** via Supabase Auth — replace placeholder auth. Portfolio narrative: "I implemented SSO migration." Architectural prep is already in V1 (every record has `user_id`).
-- **Cmd+K command palette** — Linear's signature feature, deferred from V1 because it wasn't load-bearing. Good demo of "look how easy it is to extend the keyboard system I built."
+- **Github SSO** via Supabase Auth — alternative to Google for tech users
+- **GitHub integration** — link issues to commits/PRs by issue ID in commit message
+- **Activity log** per issue (status changes over time)
 
 ---
 
@@ -19,7 +21,6 @@ These came out of the V2 planning conversation and are pre-loaded:
 
 Anything thought of while building goes here. Don't filter — capture first, evaluate later.
 
-- **Project links** — attach up to 3 URLs (GitHub, docs, etc.) with optional label to a project; needs new DB columns + UI section
 - **Claude tester agent** — give Claude a way to "see" and interact with the live site for automated QA; meta/tooling, not a user feature
 - **Latency / caching** — filtering feels slightly slow; measure before optimising, likely a Vercel cold-start or DB round-trip issue
 
@@ -29,18 +30,19 @@ Anything thought of while building goes here. Don't filter — capture first, ev
 
 Looser ideas. Not committed to anything; just brainstorming surface.
 
+- **Drag-and-drop in list view** — reorder issues within a status group (Kanban has DnD; list view could too)
+- **Separate demo view from Supabase** — to avoid showing the main contributor's projects and issues (started with dogfooding), have a separate data connection (possibly just an embedded sqlite ? ) for external visitors. Might be an item completely dropped if Google SSO is implemented easily.(mostly free once SSO is in)
+
+- **Cmd+K command palette** — Linear's signature feature, deferred from V1/V2 because it wasn't load-bearing. Good demo of "look how easy it is to extend the keyboard system I built."
 - **Multi-device by user** — same single user, but on phone and laptop with synced state (mostly free once SSO is in)
 - **Issue templates** — pre-fill common issue types (bug report, feature request)
 - **Inline issue creation** from the list view (press C, type title, enter — no modal)
 - **Smarter filtering** — saved filters as named views
 - **Keyboard navigation between issues** in the list (J/K to move, Enter to open)
-- **Activity log** per issue (status changes over time)
-- **GitHub integration** — link issues to commits/PRs by issue ID in commit message
 - **Markdown toolbar** for description editing
 - **Search** across issue titles and descriptions
 - **Subtle animations** for status transitions (Linear-style polish)
 - **Custom domains** for users — actually monetizable wedge
-- **Drag-and-drop in list view** — reorder issues within a status group (Kanban has DnD; list view could too)
 
 ---
 

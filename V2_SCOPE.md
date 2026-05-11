@@ -95,3 +95,5 @@ Any change to this file gets logged here with a date and reason.
 
 - [2026-05-10] — Initial V2 scope locked. SSO and Cmd+K moved to V3.
 - [2026-05-10] — V2.1: Added Search, Project archiving, and Project links after V2 core shipped ahead of schedule. Activity log and GitHub integration remain in V3 (non-trivial schema + integration work). Search was pulled from V3 (zero schema cost). Project archiving reuses the issue soft-delete pattern. Project links are bounded new columns on the projects table.
+- [2026-05-10] — V2.1: Reworked the design to match uaidata.io 's design system. Polished color palette, animations, positions ...
+- [2026-05-10] — V2.2 polish: unified page widths via PageContainer primitive (1120px / 768px / 672px), extended eyebrow breadcrumb to detail pages, and rerouted sidebar project rows from /projects/[id] to /issues?project=<id>. Latter is a UX change (one click to the filtered view), not a bug fix — logged here so the choice isn't silently reverted. Does not reopen V2 Done Definition.

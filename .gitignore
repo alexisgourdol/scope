@@ -97,3 +97,4 @@ docker-compose.override.yml
 *.pem
 .turbo/
 .cache/
+V3_SCOPE.md

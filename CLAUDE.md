@@ -59,23 +59,29 @@ The mono amber eyebrows (`BACKLOG`, `TODO`, `IN PROGRESS`, `DONE`) appear above 
 ### Short issue IDs (`SCP-42`) are deliberately absent
 Considered in the V2.5 plan but skipped: the schema stores only UUIDs and the UI never displays them. Adding short IDs is a schema decision (new column? computed from row order?), not a styling decision — defer to a dedicated pass. Don't reach for mono ID styling without resolving the data model question first.
 
+### Page width tiers go through `PageContainer`, not raw Tailwind utilities
+Three widths, three intents, all centered: `narrow` (672px, reading — issue detail), `default` (768px, scanning lists — projects), `wide` (1120px, data density — issues list + Kanban). The 1120px value is the uaidata canonical `--max-width`. Every page **and its loading skeleton** uses the same width so first paint never reflows. If a new page needs a different width, add a fourth variant to `components/ui/page-container.tsx` rather than reaching for `max-w-*` directly — that's how the previous drift happened (`max-w-3xl` / `max-w-4xl` / `max-w-5xl` scattered across files, `/projects/[id]` missing `mx-auto` entirely).
+
+### Sidebar project rows are filter shortcuts, not detail links
+The per-project rows in the sidebar link to `/issues?project=<id>`, not `/projects/<id>`. The mental model: **Issues is the work surface; Projects is administration.** A user clicking "ProjectA" in the sidebar wants to see ProjectA's issues, not edit ProjectA's link slots. Project detail (`/projects/[id]`) is still reachable via the Projects list row. If a future pass wants project detail front-and-center (e.g. a project becomes a dashboard with stats + recent activity), reconsider — but don't revert silently. Active-state for project rows lights up only when `pathname === "/issues" && searchParam("project") === <id>`.
+
+### Eyebrows say SCOPE, not WORKSPACE
+The top breadcrumb segment is the brand (`SCOPE / ISSUES`, `SCOPE / PROJECTS / Project name`), not the generic `WORKSPACE` placeholder. Single-user app — there is no workspace concept to disambiguate. Detail pages extend to three segments and all non-terminal segments are clickable Links. Pattern is in `components/ui/eyebrow.tsx`; don't hand-roll the mono-amber `<p>` again.
+
 ### Verification protocol for any design change
 Toggle dark mode and walk this path in both modes, plus a 375px and 768px viewport check:
 1. **List view** → select 2+ issues → confirm the floating pill is dark, white text legible, opacity buttons feel solid.
 2. **Board view** → confirm status icons read as indigo / amber / teal / muted (not green / yellow).
 3. **/projects** with an open-issue project → click archive → the warning callout and "Archive anyway" button should feel like one warm amber family, not a stack of separate amber utilities.
 4. Eyebrows wrap gracefully at narrow widths; no horizontal overflow.
+5. **Page width**: navigate `/issues` → `/issues/[id]` → `/projects` → `/projects/[id]` at ≥1280px. Each page is centered; container width changes only at expected boundaries (wide → narrow → default → default). No left-pinned pages, no reflow when a skeleton swaps to real content.
+6. **Sidebar nav**: at `/projects/abc`, only the project-list row highlights — not the top-level "Projects" link. At `/issues?project=abc`, only the project-list row highlights — not "Issues".
 
-## What is NOT in scope yet (V3)
+## V3 (planned, not yet started)
 
-Do not implement these unless the user explicitly starts V3:
+V3 planning is complete but lives outside this repo. If the user asks to start V3, stop and confirm with them first — the V3 workstream may not be in this repository.
 
-- **Google SSO** via Supabase Auth — `user_id` is already on every row, so the migration is a swap
-- **Cmd+K command palette**
-- Multi-user / sharing / teams
-- Search, saved filters, activity log, GitHub integration
-
-Full V3 backlog in [`V3_IDEAS.md`](./V3_IDEAS.md).
+Loose backlog of post-V3 ideas remains in [`V3_IDEAS.md`](./V3_IDEAS.md).
 
 ## Key components
 
@@ -86,7 +92,9 @@ Full V3 backlog in [`V3_IDEAS.md`](./V3_IDEAS.md).
 | `components/kanban-view.tsx` | Client — dnd-kit sortable kanban, optimistic status updates |
 | `components/view-toggle.tsx` | Client — List/Board toggle, writes `scope_view` cookie |
 | `components/theme-toggle.tsx` | Client — moon/sun icon button, toggles `dark` class on `<html>`, persists to `localStorage` |
-| `components/sidebar.tsx` | Client — nav, project list, theme toggle in header |
+| `components/sidebar.tsx` | Client — nav, project filter shortcuts, theme toggle in header |
+| `components/ui/page-container.tsx` | Centered page wrapper with `narrow` / `default` / `wide` variants — used by every page + matching loading skeleton |
+| `components/ui/eyebrow.tsx` | Mono-amber breadcrumb (`SCOPE / ISSUES / Project name`) with clickable non-terminal segments |
 | `app/api/issues/route.ts` | GET (list with archive filter) + POST (create) |
 | `app/api/issues/bulk/route.ts` | POST — archive / unarchive / bulk status |
 | `app/api/issues/[id]/route.ts` | GET / PATCH / DELETE single issue |
