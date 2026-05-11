@@ -12,7 +12,7 @@ Scope is a minimal, single-user issue tracker built as a personal portfolio proj
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS + shadcn/ui |
 | ORM | Drizzle ORM |
-| Database | Postgres (local dev via Docker; Supabase in production) |
+| Database | SQLite via `better-sqlite3` — file at `db/seed.sqlite`, no external service |
 | Deployment | Vercel |
 
 shadcn components live in `components/ui/`. Database schema and connection in `db/`. App Router pages under `app/`.
@@ -77,11 +77,9 @@ Toggle dark mode and walk this path in both modes, plus a 375px and 768px viewpo
 5. **Page width**: navigate `/issues` → `/issues/[id]` → `/projects` → `/projects/[id]` at ≥1280px. Each page is centered; container width changes only at expected boundaries (wide → narrow → default → default). No left-pinned pages, no reflow when a skeleton swaps to real content.
 6. **Sidebar nav**: at `/projects/abc`, only the project-list row highlights — not the top-level "Projects" link. At `/issues?project=abc`, only the project-list row highlights — not "Issues".
 
-## V3 (planned, not yet started)
+## Maintenance mode
 
-V3 planning is complete but lives outside this repo. If the user asks to start V3, stop and confirm with them first — the V3 workstream may not be in this repository.
-
-Loose backlog of post-V3 ideas remains in [`V3_IDEAS.md`](./V3_IDEAS.md).
+This repo is in maintenance mode after V2.0.0. No further feature work is planned here. V3 and beyond live in a separate private repo. If asked to start new features, stop and confirm with the user first.
 
 ## Key components
 
@@ -125,4 +123,9 @@ npm run db:studio    # Open Drizzle Studio (DB browser)
 
 ## Environment
 
-Local dev DB runs in a Docker sidecar at `db:5432`. Production is Supabase Postgres. See `.env.example` for required env vars.
+No external database required. The app reads from `db/seed.sqlite` by default (override with `DB_PATH` env var). Only two env vars are needed:
+
+| Variable      | Description                             |
+|---------------|-----------------------------------------|
+| `AUTH_SECRET` | Admin password (keep private)           |
+| `DEMO_SECRET` | Read-only demo password (safe to share) |
