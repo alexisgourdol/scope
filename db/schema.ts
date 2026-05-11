@@ -4,8 +4,8 @@ export const users = sqliteTable("users", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 });
 
 export const projects = sqliteTable("projects", {
@@ -14,15 +14,15 @@ export const projects = sqliteTable("projects", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  archivedAt: integer("archived_at", { mode: "timestamp" }),
+  archivedAt: integer("archived_at", { mode: "timestamp_ms" }),
   link1Url: text("link1_url"),
   link1Label: text("link1_label"),
   link2Url: text("link2_url"),
   link2Label: text("link2_label"),
   link3Url: text("link3_url"),
   link3Label: text("link3_label"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 });
 
 export const issues = sqliteTable("issues", {
@@ -39,9 +39,9 @@ export const issues = sqliteTable("issues", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  archivedAt: integer("archived_at", { mode: "timestamp" }),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  archivedAt: integer("archived_at", { mode: "timestamp_ms" }),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 });
 
 export type User = typeof users.$inferSelect;

@@ -20,9 +20,9 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Sea
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,
         archivedAt: projects.archivedAt,
-        issueCount: sql<number>`count(${issues.id})::int`,
-        openIssueCount: sql<number>`count(case when ${issues.archivedAt} is null and ${issues.status} != 'done' then 1 end)::int`,
-        doneActiveCount: sql<number>`count(case when ${issues.archivedAt} is null and ${issues.status} = 'done' then 1 end)::int`,
+        issueCount: sql<number>`count(${issues.id})`,
+        openIssueCount: sql<number>`count(case when ${issues.archivedAt} is null and ${issues.status} != 'done' then 1 end)`,
+        doneActiveCount: sql<number>`count(case when ${issues.archivedAt} is null and ${issues.status} = 'done' then 1 end)`,
       })
       .from(projects)
       .leftJoin(issues, eq(issues.projectId, projects.id))
