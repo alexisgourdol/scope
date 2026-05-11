@@ -1,8 +1,8 @@
 # Scope
 
-A minimal, single-user issue tracker — built with Claude Code.
+A self-hostable, open-source single-user issue tracker — built with Claude Code.
 
-Scope is a personal project management tool inspired by Linear's clean design, stripped down to the features that actually matter for solo work: issues, projects, statuses, and keyboard shortcuts. Nothing more.
+Scope is a personal project management tool inspired by Linear's clean design, stripped down to the features that actually matter for solo work: issues, projects, statuses, and keyboard shortcuts. No accounts, no infra — just clone, set two env vars, and deploy.
 
 ## Live demo
 
@@ -27,34 +27,33 @@ In demo mode, creating and modifying is restricted.
 
 ## Stack
 
-| Layer     | Choice                                            |
-| --------- | ------------------------------------------------- |
-| Framework | Next.js 15 (App Router)                           |
-| Language  | TypeScript (strict)                               |
-| Styling   | Tailwind CSS + shadcn/ui                          |
-| ORM       | Drizzle                                           |
-| Database  | Postgres (Supabase in production, Docker locally) |
-| Hosting   | Vercel                                            |
+| Layer     | Choice                          |
+| --------- | ------------------------------- |
+| Framework | Next.js 15 (App Router)         |
+| Language  | TypeScript (strict)             |
+| Styling   | Tailwind CSS + shadcn/ui        |
+| ORM       | Drizzle                         |
+| Database  | SQLite (via better-sqlite3)     |
+| Hosting   | Vercel                          |
 
-## Getting started
+## Self-hosting
 
 ### Prerequisites
 
-- Docker Desktop
-- VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
-- A [Supabase](https://supabase.com) account (free tier)
-- A [Vercel](https://vercel.com) account (free tier)
+- Node.js 18+
+- A [Vercel](https://vercel.com) account (free tier) — or any Node.js host
 
 ### Setup
 
-1. Clone the repo and open in VS Code — reopen in the devcontainer when prompted:
+1. Clone the repo:
 
    ```bash
    git clone https://github.com/alexisgourdol/scope.git
    cd scope
+   npm install
    ```
 
-2. Copy the environment template and fill in your credentials:
+2. Copy the environment template and set your passwords:
 
    ```bash
    cp .env.example .env.local
@@ -66,16 +65,24 @@ In demo mode, creating and modifying is restricted.
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000).
+4. Open [http://localhost:3000](http://localhost:3000) and log in with your `AUTH_SECRET`.
 
 ### Environment variables
 
-| Variable            | Description                                    |
-| ------------------- | ---------------------------------------------- |
-| `DATABASE_URL`      | Postgres connection string (pooled, port 6543) |
-| `DIRECT_DATABASE_URL` | Postgres connection string (direct, port 5432) |
-| `AUTH_SECRET`       | Admin password (keep private)                  |
-| `DEMO_SECRET`       | Read-only demo password (safe to share)        |
+| Variable       | Description                                |
+| -------------- | ------------------------------------------ |
+| `AUTH_SECRET`  | Admin password (keep private)              |
+| `DEMO_SECRET`  | Read-only demo password (safe to share)    |
+
+No database setup required — the app ships with a SQLite file at `db/seed.sqlite`.
+
+### Deploying to Vercel
+
+```bash
+vercel deploy
+```
+
+Set `AUTH_SECRET` and optionally `DEMO_SECRET` in the Vercel project's environment variables. No other configuration needed.
 
 ## Built with Claude Code
 
