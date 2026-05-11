@@ -42,13 +42,22 @@ All three V2 milestones are complete and live on Vercel. Full contract in [`V2_S
 
 ## Design decisions (read before the next design sprint)
 
-Token-level decisions that aren't obvious from the code and should not be re-litigated without a reason. All tokens live in `app/globals.css`; Tailwind utilities are wired in `tailwind.config.ts`.
+Decisions that aren't obvious from the code and should not be re-litigated without a reason. Tokens live in `app/globals.css`; Tailwind utilities in `tailwind.config.ts`.
 
 ### `--surface-invert` dark value is `#2E2D2A`, not the documented uaidata `#0D0D0B`
 The uaidata design system documents `#0D0D0B` for always-dark surfaces — but that value is calibrated for **full-bleed** sections (stats bar, footer) that sit *below* the page background and read as a "well." Scope's only always-dark surface today is the **floating action pill**, which is an overlay that needs to *lift off* the dark page bg (`#141412`), not sink into it. `#2E2D2A` sits one notch above the page bg, giving the pill the elevation a floating overlay needs. If a future pass adds a real full-bleed always-dark section (V3 footer, hero variant), split into two tokens: `--surface-invert` (full-bleed, `#0D0D0B`) and `--surface-overlay-dark` (floating, `#2E2D2A`).
 
 ### Status colors are semantic, not Linear-style restraint
 `--status-todo` is **indigo** (`#6366F1` / `#818CF8`) and `--status-done` is **teal** (`#0D9488` / `#14B8A6`), pulled from the uaidata portfolio-bar palette. This deliberately diverges from Linear's "all four statuses are gray-with-subtle-distinction" treatment. The intent is to make Scope read as a uaidata product rather than a Linear clone. If a future pass wants to dial restraint back up, change those two tokens in `app/globals.css` — no component edits needed.
+
+### Dates in the issue list stay relative + mono — not absolute uppercase
+The uaidata blog-card pattern uses `MAY 10` (mono, uppercase, absolute). The issue list uses `formatRelative` (`3d ago`, `today`, `2w ago`) because relative reading is faster in a productivity tool — answers "is this stale?" at a glance. Mono treatment applied to match the uaidata hand; uppercase dropped because `"3D AGO"` reads shouty in dense rows. If a future pass wants absolute mono-uppercase dates, treat it as a UX decision (relative-vs-absolute is the real question), not a styling tweak.
+
+### Status group eyebrows live only on the list view
+The mono amber eyebrows (`BACKLOG`, `TODO`, `IN PROGRESS`, `DONE`) appear above each group in `components/issue-list.tsx`. **Not** applied to Kanban column headers in `components/kanban-view.tsx` — the column container already provides separation, and the colored `IssueStatusIcon` next to the label makes an additional amber eyebrow feel redundant. Apply selectively if eyebrows go elsewhere; don't make it a uniform rule.
+
+### Short issue IDs (`SCP-42`) are deliberately absent
+Considered in the V2.5 plan but skipped: the schema stores only UUIDs and the UI never displays them. Adding short IDs is a schema decision (new column? computed from row order?), not a styling decision — defer to a dedicated pass. Don't reach for mono ID styling without resolving the data model question first.
 
 ### Verification protocol for any design change
 Toggle dark mode and walk this path in both modes, plus a 375px and 768px viewport check:
