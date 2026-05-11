@@ -32,13 +32,30 @@ All three V2 milestones are complete and live on Vercel. Full contract in [`V2_S
 - `archived_at` nullable timestamp on the `issues` table (migration `drizzle/0002_strong_the_hand.sql`)
 - `GET /api/issues` filters `WHERE archived_at IS NULL` by default; `?showArchived=true` inverts
 - `POST /api/issues/bulk` handles `archive`, `unarchive`, `status` bulk actions
-- `components/issue-list.tsx` — client component: checkbox on hover, floating action pill (always-dark `#1C1C1A` bg, white text, `bg-white/N` opacity buttons that work reliably with CSS variables)
+- `components/issue-list.tsx` — client component: checkbox on hover, floating action pill (always-dark via `bg-surface-invert` token, white text, `bg-white/N` opacity buttons that work reliably with CSS variables)
 
 ### Kanban board view
 - `?view=board` URL param; List/Board toggle in `components/view-toggle.tsx`
 - View preference persisted via cookie `scope_view` (set client-side in ViewToggle, read server-side in the issues page — no client redirect flash)
 - `components/kanban-view.tsx`: 4 status columns, `@dnd-kit/sortable` for drag-and-drop both between columns (status change → PATCH API) and within columns (local state reorder, no DB write)
 - Priority dot vertically centered with card title; project name indented `pl-[18px]` to align under title
+
+## Design decisions (read before the next design sprint)
+
+Token-level decisions that aren't obvious from the code and should not be re-litigated without a reason. All tokens live in `app/globals.css`; Tailwind utilities are wired in `tailwind.config.ts`.
+
+### `--surface-invert` dark value is `#2E2D2A`, not the documented uaidata `#0D0D0B`
+The uaidata design system documents `#0D0D0B` for always-dark surfaces — but that value is calibrated for **full-bleed** sections (stats bar, footer) that sit *below* the page background and read as a "well." Scope's only always-dark surface today is the **floating action pill**, which is an overlay that needs to *lift off* the dark page bg (`#141412`), not sink into it. `#2E2D2A` sits one notch above the page bg, giving the pill the elevation a floating overlay needs. If a future pass adds a real full-bleed always-dark section (V3 footer, hero variant), split into two tokens: `--surface-invert` (full-bleed, `#0D0D0B`) and `--surface-overlay-dark` (floating, `#2E2D2A`).
+
+### Status colors are semantic, not Linear-style restraint
+`--status-todo` is **indigo** (`#6366F1` / `#818CF8`) and `--status-done` is **teal** (`#0D9488` / `#14B8A6`), pulled from the uaidata portfolio-bar palette. This deliberately diverges from Linear's "all four statuses are gray-with-subtle-distinction" treatment. The intent is to make Scope read as a uaidata product rather than a Linear clone. If a future pass wants to dial restraint back up, change those two tokens in `app/globals.css` — no component edits needed.
+
+### Verification protocol for any design change
+Toggle dark mode and walk this path in both modes, plus a 375px and 768px viewport check:
+1. **List view** → select 2+ issues → confirm the floating pill is dark, white text legible, opacity buttons feel solid.
+2. **Board view** → confirm status icons read as indigo / amber / teal / muted (not green / yellow).
+3. **/projects** with an open-issue project → click archive → the warning callout and "Archive anyway" button should feel like one warm amber family, not a stack of separate amber utilities.
+4. Eyebrows wrap gracefully at narrow widths; no horizontal overflow.
 
 ## What is NOT in scope yet (V3)
 
