@@ -1,11 +1,12 @@
 import { db } from "@/db"
-import { issues, statusEnum } from "@/db/schema"
+import { issues } from "@/db/schema"
 import { and, eq, inArray } from "drizzle-orm"
 import { USER_ID } from "@/lib/auth"
 import { getSession } from "@/lib/session"
 import { NextResponse } from "next/server"
 
-type Status = (typeof statusEnum.enumValues)[number]
+const VALID_STATUSES = ["backlog", "todo", "in_progress", "done"] as const
+type Status = (typeof VALID_STATUSES)[number]
 
 export async function POST(request: Request) {
   if ((await getSession()) === "demo") {
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
   } else if (action === "unarchive") {
     await db.update(issues).set({ archivedAt: null, updatedAt: new Date() }).where(where)
   } else if (action === "status") {
-    if (!status || !statusEnum.enumValues.includes(status)) {
+    if (!status || !(VALID_STATUSES as readonly string[]).includes(status)) {
       return NextResponse.json({ error: "Valid status required" }, { status: 400 })
     }
     await db.update(issues).set({ status, updatedAt: new Date() }).where(where)

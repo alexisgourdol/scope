@@ -1,64 +1,47 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-export const statusEnum = pgEnum("status", [
-  "backlog",
-  "todo",
-  "in_progress",
-  "done",
-]);
-
-export const priorityEnum = pgEnum("priority", [
-  "none",
-  "low",
-  "medium",
-  "high",
-  "urgent",
-]);
-
-export const users = pgTable("users", {
-  id: uuid("id").defaultRandom().primaryKey(),
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
-export const projects = pgTable("projects", {
-  id: uuid("id").defaultRandom().primaryKey(),
+export const projects = sqliteTable("projects", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  archivedAt: timestamp("archived_at"),
+  archivedAt: integer("archived_at", { mode: "timestamp" }),
   link1Url: text("link1_url"),
   link1Label: text("link1_label"),
   link2Url: text("link2_url"),
   link2Label: text("link2_label"),
   link3Url: text("link3_url"),
   link3Label: text("link3_label"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
-export const issues = pgTable("issues", {
-  id: uuid("id").defaultRandom().primaryKey(),
+export const issues = sqliteTable("issues", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   title: text("title").notNull(),
   description: text("description"),
-  status: statusEnum("status").notNull().default("backlog"),
-  priority: priorityEnum("priority").notNull().default("none"),
-  projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
-  userId: uuid("user_id")
+  status: text("status", { enum: ["backlog", "todo", "in_progress", "done"] })
+    .notNull()
+    .default("backlog"),
+  priority: text("priority", { enum: ["none", "low", "medium", "high", "urgent"] })
+    .notNull()
+    .default("none"),
+  projectId: text("project_id").references(() => projects.id, { onDelete: "set null" }),
+  userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  archivedAt: timestamp("archived_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  archivedAt: integer("archived_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
 export type User = typeof users.$inferSelect;

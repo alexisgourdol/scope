@@ -1,13 +1,10 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 import * as schema from "./schema";
+import path from "path";
 
-const globalForDb = global as unknown as { pool: Pool };
+const DB_PATH =
+  process.env.DB_PATH ?? path.join(process.cwd(), "db", "seed.sqlite");
 
-const pool =
-  globalForDb.pool ??
-  new Pool({ connectionString: process.env.DATABASE_URL! });
-
-if (process.env.NODE_ENV !== "production") globalForDb.pool = pool;
-
-export const db = drizzle(pool, { schema });
+const sqlite = new Database(DB_PATH);
+export const db = drizzle(sqlite, { schema });

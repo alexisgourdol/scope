@@ -1,27 +1,16 @@
-import { drizzle } from "drizzle-orm/node-postgres"
-import { Pool } from "pg"
-import { config } from "dotenv"
+import { drizzle } from "drizzle-orm/better-sqlite3"
+import Database from "better-sqlite3"
 import { users } from "../db/schema"
 import { USER_ID } from "../lib/auth"
+import path from "path"
 
-config({ path: ".env.local" })
+const sqlite = new Database(path.join(process.cwd(), "db", "seed.sqlite"))
+const db = drizzle(sqlite)
 
-const pool = new Pool({
-  connectionString: process.env.DIRECT_DATABASE_URL ?? process.env.DATABASE_URL!,
-  ssl: { rejectUnauthorized: false },
-})
+db.insert(users)
+  .values({ id: USER_ID, name: "Alexis Gourdol", email: "alexis.gourdol@gmail.com" })
+  .onConflictDoNothing()
+  .run()
 
-async function seed() {
-  const db = drizzle(pool)
-  await db
-    .insert(users)
-    .values({ id: USER_ID, name: "Alexis Gourdol", email: "alexis.gourdol@gmail.com" })
-    .onConflictDoNothing()
-  console.log("Seeded user", USER_ID)
-  await pool.end()
-}
-
-seed().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
+console.log("Seeded user", USER_ID)
+sqlite.close()
