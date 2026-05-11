@@ -5,6 +5,8 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Pencil, Trash2, Check, X, Archive, ArchiveRestore, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PageContainer } from "@/components/ui/page-container"
+import { Eyebrow } from "@/components/ui/eyebrow"
 import {
   Dialog,
   DialogContent,
@@ -110,13 +112,14 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
   const hasOpenIssues = (archivingProject?.openIssueCount ?? 0) > 0
 
   return (
-    <div className="mx-auto max-w-3xl p-8">
-      <div className="mb-8 space-y-1">
-        <p className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
-          WORKSPACE / PROJECTS
-        </p>
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
+    <PageContainer width="default">
+      <div className="mb-8 space-y-3">
+        <Eyebrow segments={[{ label: "Scope", href: "/issues" }, { label: "Projects" }]} />
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-2xl font-bold tracking-tight">
+            Projects
+            <span className="ml-2 text-base font-normal text-muted-foreground">{projects.length}</span>
+          </h1>
           <div className="flex items-center gap-2">
             <button
               onClick={toggleArchivedView}
@@ -279,6 +282,6 @@ export function ProjectList({ projects, isDemo, showArchived }: Props) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </PageContainer>
   )
 }

@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { db } from "@/db"
 import { projects } from "@/db/schema"
 import { and, eq, isNull } from "drizzle-orm"
@@ -17,7 +18,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen flex-col overflow-hidden md:flex-row">
       <KeyboardShortcuts />
       <HelpModal />
-      <Sidebar projects={userProjects} isDemo={session === "demo"} />
+      <Suspense>
+        <Sidebar projects={userProjects} isDemo={session === "demo"} />
+      </Suspense>
       <main className="flex-1 overflow-auto">{children}</main>
     </div>
   )

@@ -9,6 +9,8 @@ import { IssueList } from "@/components/issue-list"
 import { KanbanView } from "@/components/kanban-view"
 import { ViewToggle } from "@/components/view-toggle"
 import { SearchBar } from "@/components/search-bar"
+import { PageContainer } from "@/components/ui/page-container"
+import { Eyebrow } from "@/components/ui/eyebrow"
 import { Suspense } from "react"
 import { cookies } from "next/headers"
 
@@ -56,29 +58,27 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
   ])
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
-      <div className="mb-6 space-y-1">
-        <p className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
-          WORKSPACE / ISSUES
-        </p>
-        <div className="flex items-center justify-between">
+    <PageContainer width="wide">
+      <div className="mb-6 space-y-3">
+        <Eyebrow segments={[{ label: "Scope", href: "/issues" }, { label: "Issues" }]} />
+        <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-bold tracking-tight">Issues</h1>
-          <div className="flex items-center gap-2">
-            <Suspense>
-              <SearchBar key={searchQuery} defaultValue={searchQuery} />
-            </Suspense>
-            <Suspense>
-              <ProjectFilter projects={projectList} />
-            </Suspense>
-            <Suspense>
-              <ViewToggle view={activeView} />
-            </Suspense>
-            <NewIssueButton
-              projects={projectList}
-              isDemo={session === "demo"}
-              defaultProjectId={projectFilter}
-            />
-          </div>
+          <NewIssueButton
+            projects={projectList}
+            isDemo={session === "demo"}
+            defaultProjectId={projectFilter}
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Suspense>
+            <SearchBar key={searchQuery} defaultValue={searchQuery} />
+          </Suspense>
+          <Suspense>
+            <ProjectFilter projects={projectList} />
+          </Suspense>
+          <Suspense>
+            <ViewToggle view={activeView} />
+          </Suspense>
         </div>
       </div>
 
@@ -93,6 +93,6 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
           isDemo={session === "demo"}
         />
       )}
-    </div>
+    </PageContainer>
   )
 }

@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { IssueStatusIcon } from "@/components/issue-status-icon"
 import { IssuePriorityIcon } from "@/components/issue-priority-icon"
+import { PageContainer } from "@/components/ui/page-container"
+import { Eyebrow } from "@/components/ui/eyebrow"
 import type { Issue, Project } from "@/db/schema"
 
 const STATUSES = [
@@ -107,10 +109,18 @@ export function IssueDetail({ issue, projects, isDemo }: { issue: IssueRow; proj
 
   const badgeClass = "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-sm"
 
+  const eyebrowSegments = [
+    { label: "Scope", href: "/issues" },
+    { label: "Issues", href: "/issues" },
+    ...(currentProject
+      ? [{ label: currentProject.name, href: `/issues?project=${currentProject.id}` }]
+      : []),
+  ]
+
   return (
-    <div className="mx-auto max-w-3xl px-8 py-6">
+    <PageContainer width="narrow">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <Link href="/issues" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Issues
@@ -120,6 +130,10 @@ export function IssueDetail({ issue, projects, isDemo }: { issue: IssueRow; proj
             <Trash2 className="h-4 w-4" />
           </Button>
         )}
+      </div>
+
+      <div className="mb-3">
+        <Eyebrow segments={eyebrowSegments} />
       </div>
 
       {/* Title */}
@@ -238,6 +252,6 @@ export function IssueDetail({ issue, projects, isDemo }: { issue: IssueRow; proj
           </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   )
 }

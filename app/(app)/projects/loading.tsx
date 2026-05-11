@@ -1,9 +1,14 @@
+import { PageContainer } from "@/components/ui/page-container"
+
 export default function ProjectsLoading() {
   return (
-    <div className="mx-auto max-w-3xl p-8">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="h-6 w-20 animate-pulse rounded bg-muted" />
-        <div className="h-8 w-28 animate-pulse rounded bg-muted" />
+    <PageContainer width="default">
+      <div className="mb-8 space-y-3">
+        <div className="h-3 w-32 animate-pulse rounded bg-muted" />
+        <div className="flex items-center justify-between gap-4">
+          <div className="h-8 w-28 animate-pulse rounded bg-muted" />
+          <div className="h-8 w-28 animate-pulse rounded bg-muted" />
+        </div>
       </div>
       <div className="divide-y rounded-md border">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -13,6 +18,6 @@ export default function ProjectsLoading() {
           </div>
         ))}
       </div>
-    </div>
+    </PageContainer>
   )
 }

@@ -1,13 +1,15 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useSearchParams, useRouter } from "next/navigation"
 import type { Project } from "@/db/schema"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: boolean }) {
     const pathname = usePathname()
+    const searchParams = useSearchParams()
     const router = useRouter()
+    const activeProjectFilter = searchParams.get("project")
 
     async function handleLogout() {
         await fetch("/api/auth/logout", { method: "POST" })
@@ -15,13 +17,16 @@ export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: bo
         router.refresh()
     }
 
-    function navClass(href: string) {
-        const active = pathname === href || (href !== "/issues" && pathname.startsWith(href))
+    function navClass(active: boolean) {
         return `flex items-center rounded-md px-3 py-1.5 text-sm transition-colors whitespace-nowrap ${active
                 ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                 : "text-sidebar-foreground hover:bg-sidebar-accent/60"
             }`
     }
+
+    // Top-level nav: exact match only. /issues is active only when no project filter is applied.
+    const issuesActive = pathname === "/issues" && !activeProjectFilter
+    const projectsActive = pathname === "/projects"
 
     return (
         <aside className="flex w-full flex-shrink-0 flex-col border-b border-sidebar-border bg-sidebar text-sidebar-foreground md:h-full md:w-56 md:border-b-0 md:border-r">
@@ -42,16 +47,20 @@ export function Sidebar({ projects, isDemo }: { projects: Project[]; isDemo?: bo
 
             {/* On mobile: horizontal nav row. On desktop: vertical nav. */}
             <div className="flex flex-row items-center gap-1 overflow-x-auto p-2 md:flex-1 md:flex-col md:items-stretch md:overflow-x-hidden md:overflow-y-auto">
-                <Link href="/issues" className={navClass("/issues")}>Issues</Link>
-                <Link href="/projects" className={navClass("/projects")}>Projects</Link>
+                <Link href="/issues" className={navClass(issuesActive)}>Issues</Link>
+                <Link href="/projects" className={navClass(projectsActive)}>Projects</Link>
 
                 {projects.length > 0 && (
                     <div className="hidden pt-4 md:block">
-                        <p className="mb-1 px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                            Projects
+                        <p className="mb-1 px-3 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                            Filter by project
                         </p>
                         {projects.map((p) => (
-                            <Link key={p.id} href={`/projects/${p.id}`} className={navClass(`/projects/${p.id}`)}>
+                            <Link
+                                key={p.id}
+                                href={`/issues?project=${p.id}`}
+                                className={navClass(pathname === "/issues" && activeProjectFilter === p.id)}
+                            >
                                 {p.name}
                             </Link>
                         ))}

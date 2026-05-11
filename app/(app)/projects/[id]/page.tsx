@@ -7,6 +7,8 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, ExternalLink } from "lucide-react"
 import { ProjectLinks } from "@/components/project-links"
+import { PageContainer } from "@/components/ui/page-container"
+import { Eyebrow } from "@/components/ui/eyebrow"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -32,18 +34,28 @@ export default async function ProjectDetailPage({ params }: Props) {
   ]
 
   return (
-    <div className="max-w-3xl p-4">
+    <PageContainer width="default">
       <Link
         href="/projects"
-        className="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         Projects
       </Link>
 
-      <div className="mb-4 flex items-start justify-between">
+      <div className="mb-3">
+        <Eyebrow
+          segments={[
+            { label: "Scope", href: "/issues" },
+            { label: "Projects", href: "/projects" },
+            { label: project.name },
+          ]}
+        />
+      </div>
+
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">{project.name}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{project.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{issueCount} open {issueCount === 1 ? "issue" : "issues"}</p>
         </div>
         <Link
@@ -58,6 +70,6 @@ export default async function ProjectDetailPage({ params }: Props) {
       <div className="rounded-md border p-4">
         <ProjectLinks projectId={id} links={links} isDemo={isDemo} />
       </div>
-    </div>
+    </PageContainer>
   )
 }
