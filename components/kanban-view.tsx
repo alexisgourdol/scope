@@ -65,8 +65,8 @@ function KanbanCard({
       style={style}
       {...attributes}
       {...listeners}
-      className={`group rounded-md border bg-background p-3 shadow-sm transition-shadow ${
-        isDragging ? "opacity-50 shadow-card" : "cursor-grab hover:shadow-card active:cursor-grabbing"
+      className={`group rounded-md border bg-background p-3 shadow-sm transition-[transform,box-shadow] duration-[250ms] ease-out ${
+        isDragging ? "opacity-50 shadow-card" : "cursor-grab hover:-translate-y-[3px] hover:shadow-card active:cursor-grabbing"
       }`}
     >
       <div className="mb-2 flex items-center gap-2">
@@ -110,8 +110,8 @@ function KanbanColumn({
       </div>
       <div
         ref={setNodeRef}
-        className={`flex min-h-24 flex-1 flex-col gap-2 rounded-lg border p-2 transition-colors ${
-          isOver ? "border-accent/50 bg-accent/5" : "border-border bg-muted/30"
+        className={`flex min-h-24 flex-1 flex-col gap-2 rounded-lg border p-2 transition-all duration-200 ease-out ${
+          isOver ? "border-accent bg-accent-subtle shadow-cta" : "border-border bg-muted/30"
         }`}
       >
         <SortableContext items={issues.map((i) => i.id)} strategy={verticalListSortingStrategy}>

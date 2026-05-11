@@ -156,4 +156,18 @@
   code, kbd, pre, .mono {
     font-family: "JetBrains Mono", monospace;
   }
+
+  /* Initial-load reveal — used by IssueList rows on first visit per session.
+     Compressed version of the uaidata scroll-reveal pattern (8px, 30ms stagger). */
+  @keyframes scope-reveal {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes scope-reveal {
+      from { opacity: 0; transform: none; }
+      to   { opacity: 1; transform: none; }
+    }
+  }
 }

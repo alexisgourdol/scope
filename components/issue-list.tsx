@@ -49,12 +49,21 @@ type Props = {
   isDemo: boolean
 }
 
+// One-shot per session: the stagger reveal plays only on the first mount of
+// IssueList in a given page session, not on filter/archive toggle re-renders.
+let hasShownInitialReveal = false
+
 export function IssueList({ issues, showArchived, projectFilter, searchQuery, isDemo }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isPending, startTransition] = useTransition()
+  const [shouldReveal] = useState(() => {
+    if (hasShownInitialReveal) return false
+    hasShownInitialReveal = true
+    return true
+  })
 
   const selectionMode = selectedIds.size > 0
 
@@ -146,9 +155,13 @@ export function IssueList({ issues, showArchived, projectFilter, searchQuery, is
                 </span>
               </h2>
               <div className="divide-y rounded-lg border shadow-card">
-                {items.map((issue) => (
+                {items.map((issue, idx) => (
                   <div
                     key={issue.id}
+                    style={shouldReveal ? {
+                      animation: "scope-reveal 0.4s ease-out backwards",
+                      animationDelay: `${Math.min(idx, 11) * 30}ms`,
+                    } : undefined}
                     className={`group relative flex items-center gap-3 px-3 py-2.5 transition-colors ${
                       selectedIds.has(issue.id)
                         ? "bg-accent/10"

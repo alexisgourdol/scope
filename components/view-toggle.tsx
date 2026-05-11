@@ -21,7 +21,7 @@ export function ViewToggle({ view }: { view: "list" | "board" }) {
       <button
         onClick={() => setView("list")}
         aria-label="List view"
-        className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium transition-colors ${
+        className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium transition-[background-color,color,box-shadow] duration-200 ease-out ${
           view === "list"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground"
@@ -33,7 +33,7 @@ export function ViewToggle({ view }: { view: "list" | "board" }) {
       <button
         onClick={() => setView("board")}
         aria-label="Board view"
-        className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium transition-colors ${
+        className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium transition-[background-color,color,box-shadow] duration-200 ease-out ${
           view === "board"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground"
